@@ -50,6 +50,7 @@ class DatabaseHandler():
         Input no arguments, site, or site and username"""
         results = {}
         if site == None and username == None:
+            print("ACTIVATED")
             query_all = self.session.query(self.Account).all()
             sites = set([x.site for x in query_all])
             for item in sites:
@@ -57,9 +58,9 @@ class DatabaseHandler():
                 results[item] = [x for x in query]
             return results 
         elif site != None and username == None:
-            query = self.session.query(self.Account).filter(self.Account.site==site)
+            query = self.session.query(self.Account).filter(self.Account.site.like("%{}%".format(site)))
         elif site == None and username != None:
-            query = self.session.query(self.Account).filter(self.Account.username==username)
+            query = self.session.query(self.Account).filter(self.Account.username.like("%{}%".format(username)))
         else:
             query = self.session.query(self.Account).filter(self.Account.site==site).filter(self.Account.username==username)
         queries = [x for x in query]

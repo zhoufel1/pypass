@@ -58,6 +58,7 @@ def handle_database_input(database_handler):
         print("Accessing database...")
         return True
     
+
 def handle_password(trigger: bool, database_handler):
     """Return the user-inputted password as a string. If database is already created, check the 
     inputted password with database password. Otherwise, prompt user to create a password for database"""
@@ -75,10 +76,11 @@ def handle_password(trigger: bool, database_handler):
             print("*Passwords do not match*")
     return p_input
 
+
 def show_selected_site(database_handler, key: bytes):
     """Prompt the user to enter a site and print all account information 
     associated with that site"""
-    site_input = input("\nEnter site: ").lower()
+    site_input = input("\nEnter site: ").lower().strip(" ")
     queries = database_handler.query_database(site_input, None)
     if len(queries) == 0:
         print("*Info not found*")
@@ -94,7 +96,7 @@ def show_selected_site(database_handler, key: bytes):
 def show_selected_username(database_handler, key: bytes):
     """Prompt the user to enter a site and print all account information 
     associated with that site"""
-    user_input = input("\nEnter username: ").lower()
+    user_input = input("\nEnter username: ").lower().strip(" ")
     queries = database_handler.query_database(None, user_input)
     if len(queries) == 0:
         print("*Info not found*")
@@ -112,19 +114,18 @@ def show_all_data(database_handler, key: bytes):
     """Print all account information in the database"""
     queries = database_handler.query_database()
     print("\n============Account Info============")
-        # print(item.site.center(10, ' '), item.username.center(10, ' '), decrypt_password(item.password, key).center(10, ' '))
-        # print("{:>10s}".format(item.site), "{:>10s}".format(item.username), "{:>10s}".format(decrypt_password(item.password, key)))
-    for site in queries.keys():
+    for site in queries:
         print(site + ":")
         for item in queries[site]:
             print(item.username, decrypt_password(item.password, key))    
     print("====================================")
 
+
 def handle_data_input(database_handler, key: bytes):
     """Prompts the user to enter account information and store it into the Account table 
     in database as a row""" 
-    site = input("\nEnter site: ").lower()
-    username = input("Enter username: ").lower()
+    site = input("\nEnter site: ").lower().strip(" ")
+    username = input("Enter username: ").lower().strip(" ")
     if len(database_handler.query_database(site, username)) != 0:
         print("*Item already exists*")
     else:
@@ -145,6 +146,7 @@ def handle_row_update(database_handler, key: bytes):
     else:
         new_password = encrypt_password(Passgen(int(input("Length? "))).gen_password(), key)
         database_handler.update_item(site, username, new_password)
+
 
 def handle_row_delete(database_handler, key: bytes):
     site = input("\nEnter site: ").lower()
