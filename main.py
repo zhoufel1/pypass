@@ -24,10 +24,20 @@ def run():
         "5. Reset database\n" + "6. Exit\n")
     while True:
         if user_input == "1":
+<<<<<<< HEAD
             search_input = input("\nSearch by site? Otherwise list all. (y/n) ")
             if search_input == 'y':
                 show_selected_site(database_handler, key)
             elif search_input == 'n':
+=======
+            search_input = input("\nOptions:\n" + "1. Search by site\n" + 
+                "2. Search by username\n" + "3. Show all\n")
+            if search_input == '1':
+                show_selected_site(database_handler, key)
+            elif search_input == '2':
+                show_selected_username(database_handler, key)
+            elif search_input == '3':
+>>>>>>> Update searching
                 show_all_data(database_handler, key)
         elif user_input == "2":
             handle_data_input(database_handler, key)
@@ -44,7 +54,10 @@ def run():
         "3. Update existing entry\n" + "4. Delete existing entry\n" + 
         "5. Reset database\n" + "6. Exit\n")
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> Update searching
 #Helpers         
 def handle_database_input(database_handler):
     """Return True if the database already exist. If not, create the database and return False"""
@@ -56,6 +69,10 @@ def handle_database_input(database_handler):
         print("Accessing database...")
         return True
     
+<<<<<<< HEAD
+=======
+
+>>>>>>> Update searching
 def handle_password(trigger: bool, database_handler):
     """Return the user-inputted password as a string. If database is already created, check the 
     inputted password with database password. Otherwise, prompt user to create a password for database"""
@@ -73,12 +90,20 @@ def handle_password(trigger: bool, database_handler):
             print("*Passwords do not match*")
     return p_input
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> Update searching
 def show_selected_site(database_handler, key: bytes):
     """Prompt the user to enter a site and print all account information 
     associated with that site"""
     site_input = input("\nEnter site: ").lower()
+<<<<<<< HEAD
     queries = database_handler.query_database(site_input)
 
+=======
+    queries = database_handler.query_database(site_input, None)
+>>>>>>> Update searching
     if len(queries) == 0:
         print("*Info not found*")
     else:
@@ -89,6 +114,27 @@ def show_selected_site(database_handler, key: bytes):
                 print(item.username, decrypt_password(item.password, key))
         print("====================================")
 
+<<<<<<< HEAD
+=======
+
+def show_selected_username(database_handler, key: bytes):
+    """Prompt the user to enter a site and print all account information 
+    associated with that site"""
+    user_input = input("\nEnter username: ").lower()
+    queries = database_handler.query_database(None, user_input)
+    if len(queries) == 0:
+        print("*Info not found*")
+    else:
+        print("\n============Account Info============")
+        for site in queries:
+            for item in queries[site]:
+                if item.username == user_input:
+                    print(site + ":")
+                    print(item.username, decrypt_password(item.password, key))
+        print("====================================")
+
+
+>>>>>>> Update searching
 def show_all_data(database_handler, key: bytes):   
     """Print all account information in the database"""
     queries = database_handler.query_database()
@@ -101,6 +147,10 @@ def show_all_data(database_handler, key: bytes):
             print(item.username, decrypt_password(item.password, key))    
     print("====================================")
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> Update searching
 def handle_data_input(database_handler, key: bytes):
     """Prompts the user to enter account information and store it into the Account table 
     in database as a row""" 
@@ -114,6 +164,11 @@ def handle_data_input(database_handler, key: bytes):
             database_handler.insert_data(site, username, encrypt_password(Passgen(int(length)).gen_password(), key))
         except:
             print("Invalid entry")    
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> Update searching
 def handle_row_update(database_handler, key: bytes):
     """Prompts the user to enter account information to update that row 
     with a new generated password"""
@@ -125,6 +180,10 @@ def handle_row_update(database_handler, key: bytes):
         new_password = encrypt_password(Passgen(int(input("Length? "))).gen_password(), key)
         database_handler.update_item(site, username, new_password)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> Update searching
 def handle_row_delete(database_handler, key: bytes):
     site = input("\nEnter site: ").lower()
     username = input("Enter username: ").lower()
@@ -134,6 +193,10 @@ def handle_row_delete(database_handler, key: bytes):
         print("*Account info deleted*")
         database_handler.delete_row(site, username) 
     
+<<<<<<< HEAD
+=======
+    
+>>>>>>> Update searching
 def handle_table_delete(database_handler):
     password = getpass("You are about to wipe account info. Enter password to confirm: ")
     if not checkpw(password, database_handler.retrieve_password()):

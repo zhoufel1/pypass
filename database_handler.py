@@ -22,7 +22,8 @@ class DatabaseHandler():
         
         def __repr__(self):
             return "<Account(site='{}', username='{}', password='{}')>".format(self.site, self.username, self.password)
-    #Password class for tables 
+
+    #Password class for tables  
     class Password(Base):
         __tablename__ = 'password'
         id = Column(Integer, primary_key = True)
@@ -38,7 +39,6 @@ class DatabaseHandler():
     def create_database(self):
         """Creates an sqlite database""" 
         self.Base.metadata.create_all(self.engine)
-    
     #database manipulation 
     def insert_data(self, site: str, username: str, password: str):
         """Inserts the site, username, and password into the database"""
@@ -49,7 +49,7 @@ class DatabaseHandler():
         """Return a dictionary of queries given the site, and or username.
         Input no arguments, site, or site and username"""
         results = {}
-        if site == None:
+        if site == None and username == None:
             query_all = self.session.query(self.Account).all()
             sites = set([x.site for x in query_all])
             for item in sites:
@@ -58,16 +58,17 @@ class DatabaseHandler():
             return results 
         elif site != None and username == None:
             query = self.session.query(self.Account).filter(self.Account.site==site)
+        elif site == None and username != None:
+            query = self.session.query(self.Account).filter(self.Account.username==username)
         else:
             query = self.session.query(self.Account).filter(self.Account.site==site).filter(self.Account.username==username)
         queries = [x for x in query]
         for x in queries:
-            if x not in results.keys():
+            if x.site not in results:
                 results[x.site] = [x]
             else:
                 results[x.site].append(x)
         return results 
-
 
     def update_item(self, site: str, username: str, new_password: str):
         """Update the row with site and username with the new_password"""
@@ -86,7 +87,6 @@ class DatabaseHandler():
         self.session.query(self.Account).filter(self.Account.site == site).\
             filter(self.Account.username == username).delete()
         self.session.commit()
-    
     #password 
     def set_password(self, password: str):
         """Add password to the password table"""

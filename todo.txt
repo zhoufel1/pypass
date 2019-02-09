@@ -1,0 +1,22 @@
+Functionality:
+Add new entry (generate password automatically) 
+Query existing repository 
+- show all 
+- search 
+Update existing entry 
+Delete existing entry 
+Clear table?
+
+
+TODO:
+encrypt username as well 
+format centered text when listing queries 
+fix database_handler.py repeated lines in functions
+input without enter 
+
+
+
+dependencies: 
+SQLAlchemy 
+cryptography 
+bcrypt
