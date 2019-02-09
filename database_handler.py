@@ -50,9 +50,8 @@ class DatabaseHandler():
         Input no arguments, site, or site and username"""
         results = {}
         if site == None and username == None:
-            print("ACTIVATED")
             query_all = self.session.query(self.Account).all()
-            sites = set([x.site for x in query_all])
+            sites = sorted(set([x.site for x in query_all]))
             for item in sites:
                 query = self.session.query(self.Account).filter(self.Account.site==item)
                 results[item] = [x for x in query]
@@ -60,7 +59,7 @@ class DatabaseHandler():
         elif site != None and username == None:
             query = self.session.query(self.Account).filter(self.Account.site.like("%{}%".format(site)))
         elif site == None and username != None:
-            query = self.session.query(self.Account).filter(self.Account.username.like("%{}%".format(username)))
+            query = self.session.query(self.Account).filter(self.Account.username==username)
         else:
             query = self.session.query(self.Account).filter(self.Account.site==site).filter(self.Account.username==username)
         queries = [x for x in query]
@@ -85,7 +84,7 @@ class DatabaseHandler():
 
     def delete_row(self, site: str, username: str):
         """Delete the row in the database with site and username"""
-        self.session.query(self.Account).filter(self.Account.site == site).\
+        self.session.query(self.Account).filter(self.Account.site==site).\
             filter(self.Account.username == username).delete()
         self.session.commit()
     #password 

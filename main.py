@@ -139,8 +139,8 @@ def handle_data_input(database_handler, key: bytes):
 def handle_row_update(database_handler, key: bytes):
     """Prompts the user to enter account information to update that row 
     with a new generated password"""
-    site = input("\nEnter site: ").lower()
-    username = input("Enter username: ").lower()
+    site = input("\nEnter site: ").lower().strip(" ")
+    username = input("Enter username: ").lower().strip(" ")
     if len(database_handler.query_database(site, username)) == 0:
         print("*Item not found*")
     else:
@@ -149,8 +149,8 @@ def handle_row_update(database_handler, key: bytes):
 
 
 def handle_row_delete(database_handler, key: bytes):
-    site = input("\nEnter site: ").lower()
-    username = input("Enter username: ").lower()
+    site = input("\nEnter site: ").lower().strip(" ")
+    username = input("Enter username: ").lower().strip(" ")
     if len(database_handler.query_database(site, username)) == 0:
         print("*Item not found*")
     else:
