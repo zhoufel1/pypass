@@ -1,14 +1,3 @@
-Create a password generator that generates
-random passwords based on specific parameters
-and stores them in a graphql database. (Encrpyted!)
+Password Repository v1.1.1
 
-dependencies:
-
-grapene (>= 2.0)
-cryptography
-
-
-
-todo:
-bug fix and and edit 
-
+Dependencies: py-bcrypt, cryptography, sqlalchemy 
