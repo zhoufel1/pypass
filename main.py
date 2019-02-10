@@ -13,7 +13,7 @@ def run():
     #Create database handler object
     database_handler = db.DatabaseHandler() 
 
-    print("======================Password Repository v1.1.1======================")
+    print("======================Password Manager v1.1.1======================")
     
     #Handle password entry 
     trigger = handle_database_input(database_handler)
