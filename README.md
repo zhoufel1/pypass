@@ -2,6 +2,8 @@
 
 A python-based password manager for personal use. It automatically creates secure randomly generated passwords, encrypts them, and stores account information in an embedded database. The account information is then decrypted when retrieved. 
 
+<img src="https://user-images.githubusercontent.com/44934000/52548063-591f9900-2d99-11e9-9432-828f993c9c1a.png" height=400>
+
 ## Getting Started 
 ### Setup and Dependencies 
 Program is tested on Python 3.6. It is recommended you initialize a python virtual environment and do:
