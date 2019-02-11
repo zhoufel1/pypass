@@ -168,7 +168,4 @@ def handle_table_delete(database_handler):
 
 
 if __name__ == "__main__":
-    from pyfiglet import Figlet 
-    f = Figlet(font='slant')
-    print(f.renderText("Password REPO"))
     run()
