@@ -37,6 +37,6 @@ Onwards, the program will prompt the user for that created password.
 
 Since this program doesn't have a GUI, input numbers to access the various options. 
 
-For ease, when querying for accounts by website, you can enter keywords (e.g., entering gmail rather than http://www.gmail.com)
+For ease, when querying for accounts by website, you can enter keywords (e.g., entering gmail rather than ht<span>tp</span>://w<span>ww.gm</span>ail.com)
 
 *project by Felix Zhou.*
