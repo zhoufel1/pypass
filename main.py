@@ -87,10 +87,10 @@ def show_selected_site(database_handler, key: bytes):
     else:
         print("\n============Account Info============")
         for site in queries.keys():
-            print(site + ":")
+            print("*** " + site + ":")
             for item in queries[site]:
                 print(item.username, decrypt_password(item.password, key))
-        print("====================================")
+    print("====================================")
 
 
 def show_selected_username(database_handler, key: bytes):
@@ -105,9 +105,9 @@ def show_selected_username(database_handler, key: bytes):
         for site in queries:
             for item in queries[site]:
                 if item.username == user_input:
-                    print(site + ":")
-                    print(item.username, decrypt_password(item.password, key))
-        print("====================================")
+                    print("*** " + site + ":")
+                    print(item.username, decrypt_password(item.password, key))        
+    print("====================================")
 
 
 def show_all_data(database_handler, key: bytes):   
@@ -115,7 +115,7 @@ def show_all_data(database_handler, key: bytes):
     queries = database_handler.query_database()
     print("\n============Account Info============")
     for site in queries:
-        print(site + ":")
+        print("*** " + site + ":")
         for item in queries[site]:
             print(item.username, decrypt_password(item.password, key))    
     print("====================================")
