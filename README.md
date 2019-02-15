@@ -33,8 +33,7 @@ On first startup, the program will initialize an embedded database and prompt th
 
 Onwards, the program will prompt the user for that created password. 
 
-<img src="https://user-images.githubusercontent.com/44934000/52547424-94b86400-2d95-11e9-8fdb-46779f75612c.png" width="400">
-<img src="https://user-images.githubusercontent.com/44934000/52547415-8ec28300-2d95-11e9-8d79-6dbc7cf5f789.png" width="400">
+<img src="https://user-images.githubusercontent.com/44934000/52547424-94b86400-2d95-11e9-8fdb-46779f75612c.png" width="400"><img src="https://user-images.githubusercontent.com/44934000/52547415-8ec28300-2d95-11e9-8d79-6dbc7cf5f789.png" width="400">
 
 Since this program doesn't have a GUI, input numbers to access the various options. 
 
