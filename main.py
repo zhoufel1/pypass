@@ -1,31 +1,31 @@
 #!/usr/bin/env python3
-import os 
-import database_handler as db 
 
+import os
+from getpass import getpass
+import database_handler as db
 from encryption import key_generator, encrypt_password, decrypt_password, hash_password
 from passgen import Passgen
-from getpass import getpass 
 from bcrypt import checkpw
 
 
 def run():
-    """Initialize the program""" 
+    """Initialize the program"""
     #Create database handler object
-    database_handler = db.DatabaseHandler() 
+    database_handler = db.DatabaseHandler()
 
     print("======================Password Manager v1.1.1======================")
-    
-    #Handle password entry 
+
+    #Handle password entry
     trigger = handle_database_input(database_handler)
     key = key_generator(handle_password(trigger, database_handler))
-    #Initialize menu options 
-    user_input = input("\nOptions:\n" + "1. Show entries\n" + "2. Add new entry\n" + 
-        "3. Update existing entry\n" + "4. Delete existing entry\n" + 
-        "5. Reset database\n" + "6. Exit\n")
+    #Initialize menu options
+    user_input = input("\nOptions:\n" + "1. Show entries\n" + "2. Add new entry\n" +
+                       "3. Update existing entry\n" + "4. Delete existing entry\n" +
+                       "5. Reset database\n" + "6. Exit\n")
     while True:
         if user_input == "1":
-            search_input = input("\nOptions:\n" + "1. Search by site\n" + 
-                "2. Search by username\n" + "3. Show all\n")
+            search_input = input("\nOptions:\n" + "1. Search by site\n" +
+                                 "2. Search by username\n" + "3. Show all\n")
             if search_input == '1':
                 show_selected_site(database_handler, key)
             elif search_input == '2':
@@ -42,12 +42,12 @@ def run():
             handle_table_delete(database_handler)
         elif user_input == "6":
             #Terminates the program
-            return 0 
-        user_input = input("\nOptions:\n" + "1. Show entries\n" + "2. Add new entry\n" + 
-        "3. Update existing entry\n" + "4. Delete existing entry\n" + 
-        "5. Reset database\n" + "6. Exit\n")
+            return 0
+        user_input = input("\nOptions:\n" + "1. Show entries\n" + "2. Add new entry\n" +
+                           "3. Update existing entry\n" + "4. Delete existing entry\n" +
+                           "5. Reset database\n" + "6. Exit\n")
 
-#Helpers         
+#Helpers
 def handle_database_input(database_handler):
     """Return True if the database already exist. If not, create the database and return False"""
     if not os.path.exists('./account_database.db'):
@@ -131,7 +131,9 @@ def handle_data_input(database_handler, key: bytes):
     else:
         try:
             length = input("Password length? ")
-            database_handler.insert_data(site, username, encrypt_password(Passgen(int(length)).gen_password(), key))
+            password = Passgen(int(length)).gen_password()
+            database_handler.insert_data(site, username, encrypt_password(password, key))
+            print(password)
         except:
             print("Invalid entry")    
 
@@ -144,8 +146,11 @@ def handle_row_update(database_handler, key: bytes):
     if len(database_handler.query_database(site, username)) == 0:
         print("*Item not found*")
     else:
-        new_password = encrypt_password(Passgen(int(input("Length? "))).gen_password(), key)
+        length = input("Length? ")
+        password = Passgen(int(length)).gen_password()
+        new_password = encrypt_password(password, key)
         database_handler.update_item(site, username, new_password)
+        print(password)
 
 
 def handle_row_delete(database_handler, key: bytes):
