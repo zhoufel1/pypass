@@ -15,7 +15,7 @@ class Passgen():
         self.length = length
 
     def gen_upper_xor_lower(self, caps: bool):
-        """Returns a string representing a password that is all capitalized if caps is True and all 
+        """Returns a string representing a password that is all capitalized if caps is True and all
         lowercase if Caps is False."""
         passw = ""
         for i in range(self.length):
@@ -26,7 +26,8 @@ class Passgen():
         return passw
 
     def gen_upper_and_lower(self):
-        """Return a string representing a password that includes lower and uppercase alpha characters"""
+        """Return a string representing a password that includes
+        lower and uppercase alpha characters"""
         passw = ""
         for i in range(self.length):
             ran = randint(0, 1)
@@ -37,7 +38,8 @@ class Passgen():
         return passw
 
     def gen_password(self):
-        """Return a string representing a password containing characters that are alphanumeric upper and lowercase."""
+        """Return a string representing a password containing characters
+        that are alphanumeric upper and lowercase."""
         passw = ""
         for i in range(self.length):
             ran = randint(0, 2)
