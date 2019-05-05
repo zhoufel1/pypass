@@ -14,6 +14,7 @@ Program is tested on Python 3.6. It is recommended you initialize a python virtu
 $ pip3 install py-bcrypt
 $ pip3 install cryptography 
 $ pip3 install sqlalchemy
+$ pipe install pyperclip
 ```
 Then clone the repository by doing:
 
