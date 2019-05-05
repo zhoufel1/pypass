@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import pyperclip
 from getpass import getpass
 import database_handler as db
 from encryption import key_generator, encrypt_password, decrypt_password, hash_password
@@ -12,6 +13,7 @@ def run():
     """Initialize the program"""
     #Create database handler object
     database_handler = db.DatabaseHandler()
+    os.system('clear')
 
     print("======================Password Manager v1.1.1======================")
 
@@ -23,9 +25,12 @@ def run():
                        "3. Update existing entry\n" + "4. Delete existing entry\n" +
                        "5. Reset database\n" + "6. Exit\n")
     while True:
+        os.system('clear')
         if user_input == "1":
+            os.system('clear')
             search_input = input("\nOptions:\n" + "1. Search by site\n" +
                                  "2. Search by username\n" + "3. Show all\n")
+            os.system('clear')
             if search_input == '1':
                 show_selected_site(database_handler, key)
             elif search_input == '2':
@@ -39,7 +44,9 @@ def run():
         elif user_input == "4":
             handle_row_delete(database_handler)
         elif user_input == "5":
-            handle_table_delete(database_handler)
+            confirm = input("Are your sure? (Y/n)\n")
+            if confirm == 'Y':
+                handle_table_delete(database_handler)
         elif user_input == "6":
             #Terminates the program
             return 0
@@ -133,7 +140,7 @@ def handle_data_input(database_handler, key: bytes):
             length = input("Password length? ")
             password = Passgen(int(length)).gen_password()
             database_handler.insert_data(site, username, encrypt_password(password, key))
-            print(password)
+            pyperclip.copy(password)
         except:
             print("Invalid entry")
 
@@ -150,7 +157,7 @@ def handle_row_update(database_handler, key: bytes):
         password = Passgen(int(length)).gen_password()
         new_password = encrypt_password(password, key)
         database_handler.update_item(site, username, new_password)
-        print(password)
+        pyperclip.copy(password)
 
 
 def handle_row_delete(database_handler):
