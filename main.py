@@ -71,7 +71,7 @@ def handle_password(trigger: bool, database_handler):
     database"""
     if trigger:
         p_input = getpass("Enter your password: ")
-        if not checkpw(p_input, database_handler.retrieve_password()):
+        if not checkpw(p_input.encode(), database_handler.retrieve_password()):
             raise Exception("Incorrect password")
     else:
         while True:
@@ -174,7 +174,7 @@ def handle_row_delete(database_handler):
 def handle_table_delete(database_handler):
     """Handles table deletion"""
     password = getpass("You are about to wipe account info. Enter password to confirm: ")
-    if not checkpw(password, database_handler.retrieve_password()):
+    if not checkpw(password.encode(), database_handler.retrieve_password()):
         print("*Password incorrect. Aborted*")
     else:
         print("Dropping table...")

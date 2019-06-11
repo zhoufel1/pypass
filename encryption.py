@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 def key_generator(password: str):
     """Return bytes representing a generated key"""
-    encoded_pass = password.encode() 
+    encoded_pass = password.encode()
     salt = b'\xbf\x07\xfc\xb2Y\x80\xbas\xb4\x02\x0f\x84\x9da\xb3\xfb'
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
@@ -38,4 +38,4 @@ def decrypt_password(encrypted_pass: str, key: bytes):
 
 def hash_password(password: str):
     """Returns bytes representing a hashed password"""
-    return bcrypt.hashpw(password, bcrypt.gensalt())
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
