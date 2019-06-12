@@ -163,7 +163,7 @@ def handle_data_input(database_handler, key: bytes):
             database_handler.insert_data(site, username,
                                          encrypt_password(password, key))
             pyperclip.copy(password)
-        except:
+        except ValueError:
             print("Invalid entry")
 
 
@@ -195,7 +195,8 @@ def handle_row_delete(database_handler):
 
 def handle_table_delete(database_handler):
     """Handles table deletion"""
-    password = getpass("You are about to wipe account info. Enter password to confirm: ")
+    password = getpass("You are about to wipe account info." +
+                       "Enter password to confirm: ")
     if not checkpw(password.encode(), database_handler.retrieve_password()):
         print("*Password incorrect. Aborted*")
     else:
