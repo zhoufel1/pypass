@@ -4,13 +4,19 @@ import os
 import pyperclip
 from getpass import getpass
 import database_handler as db
-from encryption import key_generator, encrypt_password, decrypt_password, hash_password
+from encryption import (
+        key_generator,
+        encrypt_password,
+        decrypt_password,
+        hash_password
+        )
 from passgen import Passgen
 from bcrypt import checkpw
 
 
 class PasswordError(Exception):
-    """An exception that should be raised if the inputted password is incorrect."""
+    """An exception that should be raised if the
+    inputted password is incorrect."""
 
     def __init__(self, message: str) -> None:
         """Initialize the error."""
@@ -25,14 +31,17 @@ def run():
     database_handler = db.DatabaseHandler()
     os.system('clear')
 
-    print("======================Password Manager v1.1.1======================")
+    print("======================Password" +
+          "Manager v1.1.1======================")
 
-    #Handle password entry
+    # Handle password entry
     trigger = handle_database_input(database_handler)
     key = key_generator(handle_password(trigger, database_handler))
-    #Initialize menu options
-    user_input = input("\nOptions:\n" + "1. Show entries\n" + "2. Add new entry\n" +
-                       "3. Update existing entry\n" + "4. Delete existing entry\n" +
+    # Initialize menu options
+    user_input = input("\nOptions:\n" + "1. Show entries\n" +
+                       "2. Add new entry\n" +
+                       "3. Update existing entry\n" +
+                       "4. Delete existing entry\n" +
                        "5. Reset database\n" + "6. Exit\n")
     while True:
         os.system('clear')
@@ -58,15 +67,17 @@ def run():
             if confirm == 'Y':
                 handle_table_delete(database_handler)
         elif user_input == "6":
-            #Terminates the program
             return 0
-        user_input = input("\nOptions:\n" + "1. Show entries\n" + "2. Add new entry\n" +
-                           "3. Update existing entry\n" + "4. Delete existing entry\n" +
+        user_input = input("\nOptions:\n" + "1. Show entries\n" +
+                           "2. Add new entry\n" +
+                           "3. Update existing entry\n" +
+                           "4. Delete existing entry\n" +
                            "5. Reset database\n" + "6. Exit\n")
 
-#Helpers
+
 def handle_database_input(database_handler):
-    """Return True if the database already exist. If not, create the database and return False"""
+    """Return True if the database already exist. If not, create the database
+    and return False"""
     if not os.path.exists('./account_database.db'):
         print("Creating account database...")
         database_handler.create_database()
@@ -76,9 +87,9 @@ def handle_database_input(database_handler):
 
 
 def handle_password(trigger: bool, database_handler):
-    """Return the user-inputted password as a string. If database is already created, check the
-    inputted password with database password. Otherwise, prompt user to create a password for
-    database"""
+    """Return the user-inputted password as a string. If database is
+    already created, check the inputted password with database password.
+    Otherwise, prompt user to create a password for the database"""
     if trigger:
         p_input = getpass("Enter your password: ")
         if not checkpw(p_input.encode(), database_handler.retrieve_password()):
@@ -139,8 +150,8 @@ def show_all_data(database_handler, key: bytes):
 
 
 def handle_data_input(database_handler, key: bytes):
-    """Prompts the user to enter account information and store it into the Account table
-    in database as a row"""
+    """Prompts the user to enter account information and store it into the
+    Account table in database as a row"""
     site = input("\nEnter site: ").lower().strip(" ")
     username = input("Enter username: ").lower().strip(" ")
     if database_handler.query_database(site, username) != {}:
@@ -149,7 +160,8 @@ def handle_data_input(database_handler, key: bytes):
         try:
             length = input("Password length? ")
             password = Passgen(int(length)).gen_password()
-            database_handler.insert_data(site, username, encrypt_password(password, key))
+            database_handler.insert_data(site, username,
+                                         encrypt_password(password, key))
             pyperclip.copy(password)
         except:
             print("Invalid entry")
