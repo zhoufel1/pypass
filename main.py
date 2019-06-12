@@ -9,9 +9,19 @@ from passgen import Passgen
 from bcrypt import checkpw
 
 
+class PasswordError(Exception):
+    """An exception that should be raised if the inputted password is incorrect."""
+
+    def __init__(self, message: str) -> None:
+        """Initialize the error."""
+
+        super().__init__(message)
+
+
 def run():
     """Initialize the program"""
-    #Create database handler object
+
+    # Create database handler object
     database_handler = db.DatabaseHandler()
     os.system('clear')
 
