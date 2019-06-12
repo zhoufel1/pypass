@@ -8,9 +8,10 @@ from sqlalchemy.orm import sessionmaker
 
 class DatabaseHandler():
     """A class used for handling database operations"""
-    #Base class for tables
+    # Base class for tables
     Base = declarative_base()
-    #Account class for tables
+    # Account class for tables
+
     class Account(Base):
         """An account in the database."""
         __tablename__ = 'account'
@@ -23,7 +24,7 @@ class DatabaseHandler():
             return "<Account(site='{}', username='{}', password='{}')>".\
                 format(self.site, self.username, self.password)
 
-    #Password class for tables
+    # Password class for tables
     class Password(Base):
         """A password in the database."""
         __tablename__ = 'password'
@@ -34,16 +35,18 @@ class DatabaseHandler():
         """Initialize the database handler"""
         self.engine = create_engine('sqlite:///account_database.db')
         self.Base.metadata.bind = self.engine
-        self.DBSession = sessionmaker(bind = self.engine) 
+        self.DBSession = sessionmaker(bind=self.engine)
         self.session = self.DBSession()
 
     def create_database(self):
-        """Creates an sqlite database""" 
+        """Creates an sqlite database"""
         self.Base.metadata.create_all(self.engine)
-    #database manipulation
+    # database manipulation
+
     def insert_data(self, site: str, username: str, password: str):
         """Inserts the site, username, and password into the database"""
-        self.session.add(self.Account(site=site, username=username, password=password))
+        self.session.add(self.Account(site=site,
+                                      username=username, password=password))
         self.session.commit()
 
     def query_database(self, site: str = None, username: str = None):
@@ -54,17 +57,20 @@ class DatabaseHandler():
             query_all = self.session.query(self.Account).all()
             sites = sorted({x.site for x in query_all})
             for item in sites:
-                query = self.session.query(self.Account).filter(self.Account.site == item)
+                query = self.session.\
+                        query(self.Account).filter(self.Account.site == item)
                 results[item] = [x for x in query]
             return results
         elif site is not None and username is None:
             query = self.session.query(self.Account).\
                 filter(self.Account.site.like("%{}%".format(site)))
         elif site is None and username is not None:
-            query = self.session.query(self.Account).filter(self.Account.username == username)
+            query = self.session.query(self.Account).\
+                    filter(self.Account.username == username)
         else:
             query = self.session.query(self.Account).\
-                filter(self.Account.site == site).filter(self.Account.username == username)
+                filter(self.Account.site == site).\
+                filter(self.Account.username == username)
         queries = [x for x in query]
         for instance in queries:
             if instance.site not in results:
@@ -75,7 +81,8 @@ class DatabaseHandler():
 
     def update_item(self, site: str, username: str, new_password: str):
         """Update the row with site and username with the new_password"""
-        query = self.session.query(self.Account).filter(self.Account.site == site).\
+        query = self.session.query(self.Account).\
+            filter(self.Account.site == site).\
             filter(self.Account.username == username)
         query[0].password = new_password
         self.session.commit()
@@ -90,13 +97,14 @@ class DatabaseHandler():
         self.session.query(self.Account).filter(self.Account.site == site).\
             filter(self.Account.username == username).delete()
         self.session.commit()
-    #password
+
     def set_password(self, password: str):
         """Add password to the password table"""
         self.session.add(self.Password(password=password))
         self.session.commit()
 
     def retrieve_password(self):
-        """Return a string representing the password retrieved from the password table"""
+        """Return a string representing the password retrieved from the
+        password table"""
         query = self.session.query(self.Password).all()
         return query[0].password
