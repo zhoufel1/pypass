@@ -12,6 +12,7 @@ from encryption import (
         )
 from passgen import Passgen
 from bcrypt import checkpw
+from searching import levenshtein_distance
 
 
 class PasswordError(Exception):
@@ -56,6 +57,8 @@ def run():
                 show_selected_username(database_handler, key)
             elif search_input == '3':
                 show_all_data(database_handler, key)
+            elif search_input == '4':
+                show_search_query(database_handler, key)
         elif user_input == "2":
             handle_data_input(database_handler, key)
         elif user_input == "3":
@@ -103,6 +106,26 @@ def handle_password(trigger: bool, database_handler):
                 break
             print("*Passwords do not match*")
     return p_input
+
+
+def show_search_query(database_handler, key: bytes):
+    """Prompt the user to enter a search query and print all
+    account information associated with that site. If multiple
+    queries are found, have the user select."""
+
+    search_input = input("\nEnter search: ").lower().strip(" ")
+    queries = database_handler.query_database()
+    if queries == {}:
+        print("*Info not found*")
+    elif len(queries) > 1:
+        all = set()
+        for site in queries:
+            if levenshtein_distance(search_input, site) < 5:
+                for item in queries[site]:
+                    all.add(item)
+        print(all)
+    else:
+        pass
 
 
 def show_selected_site(database_handler, key: bytes):
@@ -202,7 +225,3 @@ def handle_table_delete(database_handler):
     else:
         print("Dropping table...")
         database_handler.drop_tables()
-
-
-if __name__ == "__main__":
-    run()
