@@ -70,6 +70,7 @@ def run():
             if confirm == 'Y':
                 handle_table_delete(database_handler)
         elif user_input == "6":
+            pyperclip.copy('')
             return 0
         user_input = input("\nOptions:\n" + "1. Show entries\n" +
                            "2. Add new entry\n" +
@@ -113,19 +114,20 @@ def show_search_query(database_handler, key: bytes):
     account information associated with that site. If multiple
     queries are found, have the user select."""
 
-    search_input = input("\nEnter search: ").lower().strip(" ")
-    queries = database_handler.query_database()
-    if queries == {}:
-        print("*Info not found*")
-    elif len(queries) > 1:
-        all = set()
-        for site in queries:
-            if levenshtein_distance(search_input, site) < 5:
-                for item in queries[site]:
-                    all.add(item)
-        print(all)
-    else:
-        pass
+    # search_input = input("\nEnter search: ").lower().strip(" ")
+    # queries = database_handler.query_database()
+    # if queries == {}:
+        # print("*Info not found*")
+    # elif len(queries) > 1:
+        # all = set()
+        # for site in queries:
+            # if levenshtein_distance(search_input, site) < 5:
+                # for item in queries[site]:
+                    # all.add(item)
+        # print(all)
+    # else:
+        # pass
+    print(database_handler.check_empty())
 
 
 def show_selected_site(database_handler, key: bytes):
@@ -186,6 +188,7 @@ def handle_data_input(database_handler, key: bytes):
             database_handler.insert_data(site, username,
                                          encrypt_password(password, key))
             pyperclip.copy(password)
+            print("Password copied!")
         except ValueError:
             print("Invalid entry")
 
@@ -203,6 +206,7 @@ def handle_row_update(database_handler, key: bytes):
         new_password = encrypt_password(password, key)
         database_handler.update_item(site, username, new_password)
         pyperclip.copy(password)
+        print("Password copied!")
 
 
 def handle_row_delete(database_handler):
@@ -218,7 +222,7 @@ def handle_row_delete(database_handler):
 
 def handle_table_delete(database_handler):
     """Handles table deletion"""
-    password = getpass("You are about to wipe account info." +
+    password = getpass("You are about to wipe account info. " +
                        "Enter password to confirm: ")
     if not checkpw(password.encode(), database_handler.retrieve_password()):
         print("*Password incorrect. Aborted*")
