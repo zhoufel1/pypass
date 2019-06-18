@@ -41,19 +41,22 @@ def run():
     key = key_generator(handle_password(trigger, database_handler))
     # Initialize menu options
     os.system('clear')
-    user_input = input("\nOptions:\n" + "[1]. Show entries\n" +
-                       "[2]. Add new entry\n" +
-                       "[3]. Update existing entry\n" +
-                       "[4]. Delete existing entry\n" +
-                       "[5]. Reset database\n" + "[6]. Exit\n")
+    user_input = input("\nOptions:\n" +
+                       "[1] Show entries\n" +
+                       "[2] Add new entry\n" +
+                       "[3] Update existing entry\n" +
+                       "[4] Delete existing entry\n" +
+                       "[5] Reset database\n" +
+                       "[6] Exit\n")
     while True:
         os.system('clear')
         if user_input == "1":
             os.system('clear')
-            search_input = input("\nOptions:\n" + "[1]. Search\n" +
-                                 "[2]. Search by site\n" +
-                                 "[3]. Search by username\n" +
-                                 "[4]. Show all\n")
+            search_input = input("\nOptions:\n" +
+                                 "[1] Search\n" +
+                                 "[2] Search by site\n" +
+                                 "[3] Search by username\n" +
+                                 "[4] Show all\n")
             os.system('clear')
             if search_input == '1':
                 show_search_query(database_handler, key)
@@ -78,11 +81,13 @@ def run():
         elif user_input == "6":
             pyperclip.copy('')
             return 0
-        user_input = input("\nOptions:\n" + "[1]. Show entries\n" +
-                           "[2]. Add new entry\n" +
-                           "[3]. Update existing entry\n" +
-                           "[4]. Delete existing entry\n" +
-                           "[5]. Reset database\n" + "[6]. Exit\n")
+        user_input = input("\nOptions:\n" +
+                           "[1] Show entries\n" +
+                           "[2] Add new entry\n" +
+                           "[3] Update existing entry\n" +
+                           "[4] Delete existing entry\n" +
+                           "[5] Reset database\n" +
+                           "[6] Exit\n")
 
 
 def handle_database_input(database_handler):
@@ -165,7 +170,7 @@ def show_menu(menu_options: dict):
     Show the options in the menu_options.
     """
     for item in menu_options:
-        print('[' + str(item) + ']' + '. Site: ' + menu_options[item].site +
+        print('[' + str(item) + ']' + ' Site: ' + menu_options[item].site +
               ' User: ' + menu_options[item].username)
 
 
