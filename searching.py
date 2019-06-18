@@ -48,5 +48,6 @@ def is_found(source: str, target: str) -> bool:
         return is_found(source[1:], target)
     return False
 
+
 if __name__ == '__main__':
     pass
