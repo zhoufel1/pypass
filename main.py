@@ -137,6 +137,7 @@ def show_search_query(database_handler, key: bytes):
             if is_found(search_input, item.site) or \
                     is_found(search_input, item.username):
                 results.append(item)
+        os.system('clear')
         invoke_menu(results, key)
 
 
@@ -150,7 +151,9 @@ def invoke_menu(input_list: list, key: bytes):
     options = build_menu_options(input_list)
     if options == {}:
         print("No items found")
-        return False
+        time.sleep(0.5)
+        os.system('clear')
+        return None
     show_menu(options)
     print('\n')
     user_input = input("Which account? ").strip()
@@ -162,7 +165,6 @@ def invoke_menu(input_list: list, key: bytes):
     print("Password copied")
     time.sleep(1)
     os.system('clear')
-    return True
 
 
 def show_menu(menu_options: dict):
