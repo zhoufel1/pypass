@@ -88,8 +88,8 @@ class DatabaseHandler():
     def query_by_username(self, username: str):
         """Return a dictionary of queries given the username."""
         results = {}
-        query = self.session.query(self.Account).\
-                filter(self.Account.username == username)
+        query = self.session.\
+                query(self.Account).filter(self.Account.username == username)
         queries = [x for x in query]
         for instance in queries:
             if instance.site not in results:
@@ -99,17 +99,17 @@ class DatabaseHandler():
         return results
 
     def query_all_entries(self):
-       """Return a dictionary of queries, where each
-       key denotes a site and the values are the
-       websites associated with the key."""
-       results = {}
-       query_all = self.session.query(self.Account).all()
-       sites = sorted({x.site for x in query_all})
-       for item in sites:
-           query = self.session.\
-                   query(self.Account).filter(self.Account.site == item)
-           results[item] = [x for x in query]
-       return results
+        """Return a dictionary of queries, where each
+        key denotes a site and the values are the
+        websites associated with the key."""
+        results = {}
+        query_all = self.session.query(self.Account).all()
+        sites = sorted({x.site for x in query_all})
+        for item in sites:
+            query = self.session.\
+                    query(self.Account).filter(self.Account.site == item)
+            results[item] = [x for x in query]
+        return results
 
     def is_empty(self):
         """Return True if the database is empty, False otherwise."""

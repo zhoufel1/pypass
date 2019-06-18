@@ -157,7 +157,6 @@ def invoke_menu(input_list: list, key: bytes):
     show_menu(options)
     print('\n')
     user_input = input("Which account? ").strip()
-    # TODO Implement check valid number check
     while not user_input.isnumeric():
         user_input = input("Enter valid input: ").strip()
     pyperclip.copy(decrypt_password(options[int(user_input)].password, key))
@@ -173,7 +172,7 @@ def show_menu(menu_options: dict):
     """
     for item in menu_options:
         print('[' + str(item) + ']' + ' Site: ' + menu_options[item].site +
-              ' User: ' + menu_options[item].username)
+              '\n    User: ' + menu_options[item].username)
 
 
 def build_menu_options(input_list: list):
@@ -185,6 +184,7 @@ def build_menu_options(input_list: list):
     for i in range(len(input_list)):
         results[i + 1] = input_list[i]
     return results
+
 
 def show_selected_site(database_handler, key: bytes):
     """Prompt the user to enter a site and print all account information
