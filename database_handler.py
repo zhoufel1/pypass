@@ -4,7 +4,6 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from searching import levenshtein_distance
 
 
 class DatabaseHandler():
@@ -51,26 +50,45 @@ class DatabaseHandler():
         self.session.commit()
 
     def query_database(self, site: str = None, username: str = None):
-        """Return a dictionary of queries given the site, and or username.
-        Input no arguments, site, or site and username"""
+        """
+        Return all queries in the database.
+        """
         results = {}
-        if site is None and username is None:
-            query_all = self.session.query(self.Account).all()
-            sites = sorted({x.site for x in query_all})
-            for item in sites:
-                query = self.session.\
-                        query(self.Account).filter(self.Account.site == item)
-                results[item] = [x for x in query]
-            return results
-        elif site is not None and username is None:
-            query = self.session.query(self.Account).\
-                filter(self.Account.site.like("%{}%".format(site)))
-        elif site is None and username is not None:
-            query = self.session.query(self.Account).\
-                    filter(self.Account.username == username)
-        else:
-            query = self.session.query(self.Account).\
-                filter(self.Account.site == site).\
+        query_all = self.session.query(self.Account).all()
+        results = [x for x in query_all]
+        return results
+
+    def query_site_and_user(self, site: str, username: str):
+        """Return an account with site and username."""
+        results = {}
+        query = self.session.query(self.Account).\
+            filter(self.Account.site == site).\
+            filter(self.Account.username == username)
+        queries = [x for x in query]
+        for instance in queries:
+            if instance.site not in results:
+                results[instance.site] = [instance]
+            else:
+                results[instance.site].append(instance)
+        return results
+
+    def query_by_site(self, site: str):
+        """Return a dictionary of queries given the site."""
+        results = {}
+        query = self.session.query(self.Account).\
+            filter(self.Account.site.like("%{}%".format(site)))
+        queries = [x for x in query]
+        for instance in queries:
+            if instance.site not in results:
+                results[instance.site] = [instance]
+            else:
+                results[instance.site].append(instance)
+        return results
+
+    def query_by_username(self, username: str):
+        """Return a dictionary of queries given the username."""
+        results = {}
+        query = self.session.query(self.Account).\
                 filter(self.Account.username == username)
         queries = [x for x in query]
         for instance in queries:
@@ -79,6 +97,24 @@ class DatabaseHandler():
             else:
                 results[instance.site].append(instance)
         return results
+
+    def query_all_entries(self):
+       """Return a dictionary of queries, where each
+       key denotes a site and the values are the
+       websites associated with the key."""
+       results = {}
+       query_all = self.session.query(self.Account).all()
+       sites = sorted({x.site for x in query_all})
+       for item in sites:
+           query = self.session.\
+                   query(self.Account).filter(self.Account.site == item)
+           results[item] = [x for x in query]
+       return results
+
+    def is_empty(self):
+        """Return True if the database is empty, False otherwise."""
+        results = self.query_database()
+        return len(results) == 0
 
     def update_item(self, site: str, username: str, new_password: str):
         """Update the row with site and username with the new_password"""

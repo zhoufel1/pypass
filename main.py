@@ -2,6 +2,7 @@
 
 import os
 import pyperclip
+import time
 from getpass import getpass
 import database_handler as db
 from encryption import (
@@ -12,7 +13,7 @@ from encryption import (
         )
 from passgen import Passgen
 from bcrypt import checkpw
-from searching import levenshtein_distance
+from searching import is_found
 
 
 class PasswordError(Exception):
@@ -33,29 +34,34 @@ def run():
     os.system('clear')
 
     print("======================Password" +
-          "Manager v1.1.1======================")
+          "Manager======================")
 
     # Handle password entry
     trigger = handle_database_input(database_handler)
     key = key_generator(handle_password(trigger, database_handler))
     # Initialize menu options
-    user_input = input("\nOptions:\n" + "1. Show entries\n" +
-                       "2. Add new entry\n" +
-                       "3. Update existing entry\n" +
-                       "4. Delete existing entry\n" +
-                       "5. Reset database\n" + "6. Exit\n")
+    os.system('clear')
+    user_input = input("\nOptions:\n" + "[1]. Show entries\n" +
+                       "[2]. Add new entry\n" +
+                       "[3]. Update existing entry\n" +
+                       "[4]. Delete existing entry\n" +
+                       "[5]. Reset database\n" + "[6]. Exit\n")
     while True:
         os.system('clear')
         if user_input == "1":
             os.system('clear')
-            search_input = input("\nOptions:\n" + "1. Search by site\n" +
-                                 "2. Search by username\n" + "3. Show all\n")
+            search_input = input("\nOptions:\n" + "[1]. Search\n" +
+                                 "[2]. Search by site\n" +
+                                 "[3]. Search by username\n" +
+                                 "[4]. Show all\n")
             os.system('clear')
             if search_input == '1':
-                show_selected_site(database_handler, key)
+                show_search_query(database_handler, key)
             elif search_input == '2':
-                show_selected_username(database_handler, key)
+                show_selected_site(database_handler, key)
             elif search_input == '3':
+                show_selected_username(database_handler, key)
+            elif search_input == '4':
                 show_all_data(database_handler, key)
             elif search_input == '4':
                 show_search_query(database_handler, key)
@@ -72,11 +78,11 @@ def run():
         elif user_input == "6":
             pyperclip.copy('')
             return 0
-        user_input = input("\nOptions:\n" + "1. Show entries\n" +
-                           "2. Add new entry\n" +
-                           "3. Update existing entry\n" +
-                           "4. Delete existing entry\n" +
-                           "5. Reset database\n" + "6. Exit\n")
+        user_input = input("\nOptions:\n" + "[1]. Show entries\n" +
+                           "[2]. Add new entry\n" +
+                           "[3]. Update existing entry\n" +
+                           "[4]. Delete existing entry\n" +
+                           "[5]. Reset database\n" + "[6]. Exit\n")
 
 
 def handle_database_input(database_handler):
@@ -114,27 +120,70 @@ def show_search_query(database_handler, key: bytes):
     account information associated with that site. If multiple
     queries are found, have the user select."""
 
-    # search_input = input("\nEnter search: ").lower().strip(" ")
-    # queries = database_handler.query_database()
-    # if queries == {}:
-        # print("*Info not found*")
-    # elif len(queries) > 1:
-        # all = set()
-        # for site in queries:
-            # if levenshtein_distance(search_input, site) < 5:
-                # for item in queries[site]:
-                    # all.add(item)
-        # print(all)
-    # else:
-        # pass
-    print(database_handler.check_empty())
+    if database_handler.is_empty():
+        print("Database is empty...")
+        time.sleep(1)
+        return None
+    else:
+        search_input = input("\nEnter search: ").lower().strip(" ")
+        queries = database_handler.query_database()
+        results = []
+        for item in queries:
+            if is_found(search_input, item.site) or \
+                    is_found(search_input, item.username):
+                results.append(item)
+        invoke_menu(results, key)
 
+
+def invoke_menu(input_list: list, key: bytes):
+    """
+    Display the meny of options and prompt the user
+    to select a valid option. Retrieve the password
+    with the associated selection.
+
+    """
+    options = build_menu_options(input_list)
+    if options == {}:
+        print("No items found")
+        return False
+    show_menu(options)
+    print('\n')
+    user_input = input("Which account? ").strip()
+    # TODO Implement check valid number check
+    while not user_input.isnumeric():
+        user_input = input("Enter valid input: ").strip()
+    pyperclip.copy(decrypt_password(options[int(user_input)].password, key))
+    os.system('clear')
+    print("Password copied")
+    time.sleep(1)
+    os.system('clear')
+    return True
+
+
+def show_menu(menu_options: dict):
+    """
+    Show the options in the menu_options.
+    """
+    for item in menu_options:
+        print('[' + str(item) + ']' + '. Site: ' + menu_options[item].site +
+              ' User: ' + menu_options[item].username)
+
+
+def build_menu_options(input_list: list):
+    """Return a dictionary wherein the keys
+    correspond to integer input values starting from 0
+    the values are the account information."""
+
+    results = {}
+    for i in range(len(input_list)):
+        results[i + 1] = input_list[i]
+    return results
 
 def show_selected_site(database_handler, key: bytes):
     """Prompt the user to enter a site and print all account information
     associated with that site"""
     site_input = input("\nEnter site: ").lower().strip(" ")
-    queries = database_handler.query_database(site_input, None)
+    queries = database_handler.query_by_site(site_input)
     if queries == {}:
         print("*Info not found*")
     else:
@@ -150,7 +199,7 @@ def show_selected_username(database_handler, key: bytes):
     """Prompt the user to enter a site and print all account information
     associated with that site"""
     user_input = input("\nEnter username: ").lower().strip(" ")
-    queries = database_handler.query_database(None, user_input)
+    queries = database_handler.query_by_username(user_input)
     if queries == {}:
         print("*Info not found*")
     else:
@@ -165,7 +214,7 @@ def show_selected_username(database_handler, key: bytes):
 
 def show_all_data(database_handler, key: bytes):
     """Print all account information in the database"""
-    queries = database_handler.query_database()
+    queries = database_handler.query_all_entries()
     print("\n============Account Info============")
     for site in queries:
         print("*** " + site + ":")
@@ -179,7 +228,7 @@ def handle_data_input(database_handler, key: bytes):
     Account table in database as a row"""
     site = input("\nEnter site: ").lower().strip(" ")
     username = input("Enter username: ").lower().strip(" ")
-    if database_handler.query_database(site, username) != {}:
+    if database_handler.query_site_and_user(site, username) != {}:
         print("*Item already exists*")
     else:
         try:
@@ -198,7 +247,7 @@ def handle_row_update(database_handler, key: bytes):
     with a new generated password"""
     site = input("\nEnter site: ").lower().strip(" ")
     username = input("Enter username: ").lower().strip(" ")
-    if database_handler.query_database(site, username) == {}:
+    if database_handler.query_site_and_user(site, username) == {}:
         print("*Item not found*")
     else:
         length = input("Length? ")
@@ -213,7 +262,7 @@ def handle_row_delete(database_handler):
     """Handles row deletion"""
     site = input("\nEnter site: ").lower().strip(" ")
     username = input("Enter username: ").lower().strip(" ")
-    if database_handler.query_database(site, username) == {}:
+    if database_handler.query_site_and_user(site, username) == {}:
         print("*Item not found*")
     else:
         print("*Account info deleted*")
