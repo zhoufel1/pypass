@@ -290,3 +290,7 @@ def build_menu_options(input_list: list):
     for i in range(len(input_list)):
         results[i + 1] = input_list[i]
     return results
+
+
+if __name__ == '__main__':
+    run()
