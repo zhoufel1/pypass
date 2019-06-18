@@ -31,14 +31,15 @@ def run():
 
     # Create database handler object
     database_handler = db.DatabaseHandler()
-    os.system('clear')
 
+    os.system('clear')
     print("======================Password" +
           "Manager======================")
 
     # Handle password entry
-    trigger = handle_database_input(database_handler)
+    trigger = create_database(database_handler)
     key = key_generator(handle_password(trigger, database_handler))
+
     # Initialize menu options
     os.system('clear')
     user_input = input("\nOptions:\n" +
@@ -48,6 +49,8 @@ def run():
                        "[4] Delete existing entry\n" +
                        "[5] Reset database\n" +
                        "[6] Exit\n")
+
+    # Menu loop
     while True:
         os.system('clear')
         if user_input == "1":
@@ -90,7 +93,7 @@ def run():
                            "[6] Exit\n")
 
 
-def handle_database_input(database_handler):
+def create_database(database_handler):
     """Return True if the database already exist. If not, create the database
     and return False"""
     if not os.path.exists('./account_database.db'):
@@ -139,51 +142,6 @@ def show_search_query(database_handler, key: bytes):
                 results.append(item)
         os.system('clear')
         invoke_menu(results, key)
-
-
-def invoke_menu(input_list: list, key: bytes):
-    """
-    Display the meny of options and prompt the user
-    to select a valid option. Retrieve the password
-    with the associated selection.
-
-    """
-    options = build_menu_options(input_list)
-    if options == {}:
-        print("No items found")
-        time.sleep(0.5)
-        os.system('clear')
-        return None
-    show_menu(options)
-    print('\n')
-    user_input = input("Which account? ").strip()
-    while not user_input.isnumeric():
-        user_input = input("Enter valid input: ").strip()
-    pyperclip.copy(decrypt_password(options[int(user_input)].password, key))
-    os.system('clear')
-    print("Password copied")
-    time.sleep(1)
-    os.system('clear')
-
-
-def show_menu(menu_options: dict):
-    """
-    Show the options in the menu_options.
-    """
-    for item in menu_options:
-        print('[' + str(item) + ']' + ' Site: ' + menu_options[item].site +
-              '\n    User: ' + menu_options[item].username)
-
-
-def build_menu_options(input_list: list):
-    """Return a dictionary wherein the keys
-    correspond to integer input values starting from 0
-    the values are the account information."""
-
-    results = {}
-    for i in range(len(input_list)):
-        results[i + 1] = input_list[i]
-    return results
 
 
 def show_selected_site(database_handler, key: bytes):
@@ -285,3 +243,50 @@ def handle_table_delete(database_handler):
     else:
         print("Dropping table...")
         database_handler.drop_tables()
+
+
+# ======================Search Menu Logic========================
+
+def invoke_menu(input_list: list, key: bytes):
+    """
+    Display the meny of options and prompt the user
+    to select a valid option. Retrieve the password
+    with the associated selection.
+
+    """
+    options = build_menu_options(input_list)
+    if options == {}:
+        print("No items found")
+        time.sleep(0.5)
+        os.system('clear')
+        return None
+    show_menu(options)
+    print('\n')
+    user_input = input("Which account? ").strip()
+    while not user_input.isnumeric():
+        user_input = input("Enter valid input: ").strip()
+    pyperclip.copy(decrypt_password(options[int(user_input)].password, key))
+    os.system('clear')
+    print("Password copied")
+    time.sleep(1)
+    os.system('clear')
+
+
+def show_menu(menu_options: dict):
+    """
+    Show the options in the menu_options.
+    """
+    for item in menu_options:
+        print('[' + str(item) + ']' + ' Site: ' + menu_options[item].site +
+              '\n    User: ' + menu_options[item].username)
+
+
+def build_menu_options(input_list: list):
+    """Return a dictionary wherein the keys
+    correspond to integer input values starting from 0
+    the values are the account information."""
+
+    results = {}
+    for i in range(len(input_list)):
+        results[i + 1] = input_list[i]
+    return results
