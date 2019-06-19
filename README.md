@@ -47,6 +47,10 @@ deactivate
 <img src="https://user-images.githubusercontent.com/44934000/52547424-94b86400-2d95-11e9-8fdb-46779f75612c.png" width="400"><img src="https://user-images.githubusercontent.com/44934000/52547415-8ec28300-2d95-11e9-8d79-6dbc7cf5f789.png" width="400">
 
 #### Fuzzy searching
+To aid with accessing items in the repository, the program has a fuzzy searcher which will return items associated with the user query.
 
+#### Password Copying
+Passwords are copied to the clipboard directly after query.
 
+<br/>
 *project by Felix Zhou.*
