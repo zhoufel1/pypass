@@ -23,15 +23,15 @@ def key_generator(password: str) -> bytes:
 
 
 def encrypt_password(password: str, key: bytes) -> str:
-    """Return a string representing a password encrypted using Fernet given the key to be
-    stored in the database"""
+    """Return a string representing a password encrypted using Fernet given the
+    key to be stored in the database"""
     fernet_obj = Fernet(key)
     return fernet_obj.encrypt(password.encode()).decode('utf-8')
 
 
 def decrypt_password(encrypted_pass: str, key: bytes) -> str:
-    """Return a string representing a password retrieved from the database decrypted using
-    Fernet given the key"""
+    """Return a string representing a password retrieved from the database
+    decrypted using Fernet given the key"""
     fernet_obj = Fernet(key)
     return fernet_obj.decrypt(encrypted_pass.encode()).decode('utf-8')
 
