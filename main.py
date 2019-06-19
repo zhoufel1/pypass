@@ -88,6 +88,7 @@ def run() -> None:
 def create_database(database_handler) -> bool:
     """Return True if the database already exist. If not, create the database
     and return False"""
+
     if not os.path.exists('./account_database.db'):
         print("Creating account database...")
         database_handler.create_database()
@@ -100,6 +101,7 @@ def handle_password(trigger: bool, database_handler) -> str:
     """Return the user-inputted password as a string. If database is
     already created, check the inputted password with database password.
     Otherwise, prompt user to create a password for the database"""
+
     if trigger:
         p_input = getpass("Enter your password: ")
         if not checkpw(p_input.encode(), database_handler.retrieve_password()):
@@ -107,13 +109,12 @@ def handle_password(trigger: bool, database_handler) -> str:
         return p_input
     else:
         while True:
-            p_input = getpass("Enter a password for database: ")
-            p_input1 = getpass("Re-enter the password: ")
-            if p_input == p_input1:
+            first_entry = getpass("Enter a password for database: ")
+            second_entry = getpass("Re-enter the password: ")
+            if first_entry == second_entry:
                 database_handler.set_password(hash_password(p_input))
-                break
+                return p_input
             print("*Passwords do not match*")
-        return p_input
 
 
 def show_search_query(database_handler, key: bytes) -> None:
