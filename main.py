@@ -57,26 +57,18 @@ def run():
             os.system('clear')
             search_input = input("\nOptions:\n" +
                                  "[1] Search\n" +
-                                 "[2] Search by site\n" +
-                                 "[3] Search by username\n" +
-                                 "[4] Show all\n")
+                                 "[2] Show all\n")
             os.system('clear')
             if search_input == '1':
                 show_search_query(database_handler, key)
             elif search_input == '2':
-                show_selected_site(database_handler, key)
-            elif search_input == '3':
-                show_selected_username(database_handler, key)
-            elif search_input == '4':
                 show_all_data(database_handler, key)
-            elif search_input == '4':
-                show_search_query(database_handler, key)
         elif user_input == "2":
             handle_data_input(database_handler, key)
         elif user_input == "3":
-            handle_row_update(database_handler, key)
+            handle_data_update(database_handler, key)
         elif user_input == "4":
-            handle_row_delete(database_handler)
+            handle_data_delete(database_handler)
         elif user_input == "5":
             confirm = input("Are your sure? (Y/n)\n")
             if confirm == 'Y':
@@ -131,7 +123,7 @@ def show_search_query(database_handler, key: bytes):
     if database_handler.is_empty():
         print("Database is empty...")
         time.sleep(1)
-        return None
+        os.system('clear')
     else:
         search_input = input("\nEnter search: ").lower().strip(" ")
         queries = database_handler.query_database()
@@ -141,7 +133,18 @@ def show_search_query(database_handler, key: bytes):
                     is_found(search_input, item.username):
                 results.append(item)
         os.system('clear')
-        invoke_menu(results, key)
+        if results == []:
+            os.system('clear')
+            print('No results found')
+            time.sleep(1)
+            os.system('clear')
+        else:
+            pyperclip.\
+                copy(decrypt_password(invoke_menu(results, key).password, key))
+            os.system('clear')
+            print("Password copied")
+            time.sleep(1)
+            os.system('clear')
 
 
 def show_all_data(database_handler, key: bytes):
@@ -174,23 +177,38 @@ def handle_data_input(database_handler, key: bytes):
             print("Invalid entry")
 
 
-def handle_row_update(database_handler, key: bytes):
+def handle_data_update(database_handler, key: bytes):
     """Prompts the user to enter account information to update that row
     with a new generated password"""
-    site = input("\nEnter site: ").lower().strip(" ")
-    username = input("Enter username: ").lower().strip(" ")
-    if database_handler.query_site_and_user(site, username) == {}:
-        print("*Item not found*")
+    if database_handler.is_empty():
+        print("Database is empty...")
+        time.sleep(1)
+        os.system('clear')
     else:
-        length = input("Length? ")
-        password = Passgen(int(length)).gen_password()
-        new_password = encrypt_password(password, key)
-        database_handler.update_item(site, username, new_password)
-        pyperclip.copy(password)
-        print("Password copied!")
+        search_input = input("\nEnter search: ").lower().strip(" ")
+        queries = database_handler.query_database()
+        results = []
+        for item in queries:
+            if is_found(search_input, item.site) or \
+                    is_found(search_input, item.username):
+                results.append(item)
+        os.system('clear')
+        if results == []:
+            print("No results found")
+            time.sleep(1)
+            os.system('clear')
+        else:
+            selec = invoke_menu(results, key)
+            password = Passgen(int(input("Length? "))).gen_password()
+            new_password = encrypt_password(password, key)
+            database_handler.\
+                update_item(selec.site, selec.username, new_password)
+            os.system('clear')
+            pyperclip.copy(password)
+            print("Password copied!")
 
 
-def handle_row_delete(database_handler):
+def handle_data_delete(database_handler):
     """Handles row deletion"""
     site = input("\nEnter site: ").lower().strip(" ")
     username = input("Enter username: ").lower().strip(" ")
@@ -232,11 +250,7 @@ def invoke_menu(input_list: list, key: bytes):
     user_input = input("Which account? ").strip()
     while not user_input.isnumeric():
         user_input = input("Enter valid input: ").strip()
-    pyperclip.copy(decrypt_password(options[int(user_input)].password, key))
-    os.system('clear')
-    print("Password copied")
-    time.sleep(1)
-    os.system('clear')
+    return options[int(user_input)]
 
 
 def show_menu(menu_options: dict):
