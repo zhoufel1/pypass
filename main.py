@@ -42,8 +42,7 @@ def run() -> None:
 
     # Initialize menu options
     os.system('clear')
-    user_input = input("\nOptions:\n" +
-                       "[1] Show entries\n" +
+    user_input = input("[1] Show entries\n" +
                        "[2] Add new entry\n" +
                        "[3] Update existing entry\n" +
                        "[4] Delete existing entry\n" +
@@ -55,8 +54,7 @@ def run() -> None:
         os.system('clear')
         if user_input == "1":
             os.system('clear')
-            search_input = input("\nOptions:\n" +
-                                 "[1] Search\n" +
+            search_input = input("[1] Search\n" +
                                  "[2] Show all\n")
             os.system('clear')
             if search_input == '1':
@@ -76,8 +74,7 @@ def run() -> None:
         elif user_input == "6":
             pyperclip.copy('')
             return 0
-        user_input = input("\nOptions:\n" +
-                           "[1] Show entries\n" +
+        user_input = input("[1] Show entries\n" +
                            "[2] Add new entry\n" +
                            "[3] Update existing entry\n" +
                            "[4] Delete existing entry\n" +
@@ -112,8 +109,8 @@ def handle_password(trigger: bool, database_handler) -> str:
             first_entry = getpass("Enter a password for database: ")
             second_entry = getpass("Re-enter the password: ")
             if first_entry == second_entry:
-                database_handler.set_password(hash_password(p_input))
-                return p_input
+                database_handler.set_password(hash_password(first_entry))
+                return first_entry
             print("*Passwords do not match*")
 
 
