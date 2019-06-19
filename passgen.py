@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# Password generator class
 import string
 
 from random import randint
@@ -10,11 +9,11 @@ class Passgen():
     upper = string.ascii_uppercase
     lower = string.ascii_lowercase
 
-    def __init__(self, length: int):
+    def __init__(self, length: int) -> None:
         """Initialize the password generator"""
         self.length = length
 
-    def gen_upper_xor_lower(self, caps: bool):
+    def gen_upper_xor_lower(self, caps: bool) -> str:
         """Returns a string representing a password that is all capitalized if
         caps is True and all lowercase if Caps is False."""
         passw = ""
@@ -27,7 +26,7 @@ class Passgen():
             i += 1
         return passw
 
-    def gen_upper_and_lower(self):
+    def gen_upper_and_lower(self) -> str:
         """Return a string representing a password that includes
         lower and uppercase alpha characters"""
         passw = ""
@@ -41,7 +40,7 @@ class Passgen():
             i += 1
         return passw
 
-    def gen_password(self):
+    def gen_password(self) -> str:
         """Return a string representing a password containing characters
         that are alphanumeric upper and lowercase."""
         passw = ""
