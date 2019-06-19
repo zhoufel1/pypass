@@ -72,32 +72,6 @@ class DatabaseHandler():
                 results[instance.site].append(instance)
         return results
 
-    def query_by_site(self, site: str):
-        """Return a dictionary of queries given the site."""
-        results = {}
-        query = self.session.query(self.Account).\
-            filter(self.Account.site.like("%{}%".format(site)))
-        queries = [x for x in query]
-        for instance in queries:
-            if instance.site not in results:
-                results[instance.site] = [instance]
-            else:
-                results[instance.site].append(instance)
-        return results
-
-    def query_by_username(self, username: str):
-        """Return a dictionary of queries given the username."""
-        results = {}
-        query = self.session.\
-                query(self.Account).filter(self.Account.username == username)
-        queries = [x for x in query]
-        for instance in queries:
-            if instance.site not in results:
-                results[instance.site] = [instance]
-            else:
-                results[instance.site].append(instance)
-        return results
-
     def query_all_entries(self):
         """Return a dictionary of queries, where each
         key denotes a site and the values are the

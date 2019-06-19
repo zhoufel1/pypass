@@ -144,39 +144,6 @@ def show_search_query(database_handler, key: bytes):
         invoke_menu(results, key)
 
 
-def show_selected_site(database_handler, key: bytes):
-    """Prompt the user to enter a site and print all account information
-    associated with that site"""
-    site_input = input("\nEnter site: ").lower().strip(" ")
-    queries = database_handler.query_by_site(site_input)
-    if queries == {}:
-        print("*Info not found*")
-    else:
-        print("\n============Account Info============")
-        for site in queries.keys():
-            print("*** " + site + ":")
-            for item in queries[site]:
-                print(item.username, decrypt_password(item.password, key))
-    print("====================================")
-
-
-def show_selected_username(database_handler, key: bytes):
-    """Prompt the user to enter a site and print all account information
-    associated with that site"""
-    user_input = input("\nEnter username: ").lower().strip(" ")
-    queries = database_handler.query_by_username(user_input)
-    if queries == {}:
-        print("*Info not found*")
-    else:
-        print("\n============Account Info============")
-        for site in queries:
-            for item in queries[site]:
-                if item.username == user_input:
-                    print("*** " + site + ":")
-                    print(item.username, decrypt_password(item.password, key))
-    print("====================================")
-
-
 def show_all_data(database_handler, key: bytes):
     """Print all account information in the database"""
     queries = database_handler.query_all_entries()
