@@ -43,7 +43,7 @@ class DatabaseHandler():
         self.Base.metadata.create_all(self.engine)
 
     def insert_data(self, site: str,
-                          username: str, password: str) -> None:
+                    username: str, password: str) -> None:
         """Inserts the site, username, and password into the database"""
         self.session.add(self.Account(site=site,
                                       username=username, password=password))
