@@ -50,7 +50,6 @@ deactivate
 To aid with accessing items in the repository, the program has a fuzzy searcher which will return items associated with the user query.
 
 #### Password Copying
-Passwords are copied to the clipboard directly after query.
+Passwords are copied to the clipboard directly after query.<br/>
 
-<br/>
-*project by Felix Zhou.*
+_project by Felix Zhou._
