@@ -14,7 +14,7 @@ It is recommended to use Python3.6.1+. The following dependencies are necessary:
 $ pip3 install py-bcrypt
 $ pip3 install cryptography
 $ pip3 install sqlalchemy
-$ pipe install pyperclip
+$ pip3 install pyperclip
 ```
 Then clone the repository by doing:
 
@@ -46,8 +46,7 @@ deactivate
 ```
 <img src="https://user-images.githubusercontent.com/44934000/52547424-94b86400-2d95-11e9-8fdb-46779f75612c.png" width="400"><img src="https://user-images.githubusercontent.com/44934000/52547415-8ec28300-2d95-11e9-8d79-6dbc7cf5f789.png" width="400">
 
-Since this program doesn't have a GUI, input numbers to access the various options.
+#### Fuzzy searching
 
-For ease, when querying for accounts by website, you can enter keywords (e.g., entering gmail rather than ht<span>tp</span>://w<span>ww.gm</span>ail.com)
 
 *project by Felix Zhou.*
