@@ -140,7 +140,7 @@ def show_search_query(database_handler, key: bytes):
             os.system('clear')
         else:
             pyperclip.\
-                copy(decrypt_password(invoke_menu(results, key).password, key))
+                copy(decrypt_password(invoke_menu(results).password, key))
             os.system('clear')
             print("Password copied")
             time.sleep(1)
@@ -198,7 +198,7 @@ def handle_data_update(database_handler, key: bytes):
             time.sleep(1)
             os.system('clear')
         else:
-            selec = invoke_menu(results, key)
+            selec = invoke_menu(results)
             password = Passgen(int(input("Length? "))).gen_password()
             new_password = encrypt_password(password, key)
             database_handler.\
@@ -210,14 +210,30 @@ def handle_data_update(database_handler, key: bytes):
 
 def handle_data_delete(database_handler):
     """Handles row deletion"""
-    site = input("\nEnter site: ").lower().strip(" ")
-    username = input("Enter username: ").lower().strip(" ")
-    if database_handler.query_site_and_user(site, username) == {}:
-        print("*Item not found*")
+    if database_handler.is_empty():
+        print("Database is empty...")
+        time.sleep(1)
+        os.system('clear')
     else:
-        print("*Account info deleted*")
-        database_handler.delete_row(site, username)
-
+        search_input = input("\nEnter search: ").lower().strip(" ")
+        queries = database_handler.query_database()
+        results = []
+        for item in queries:
+            if is_found(search_input, item.site) or \
+                    is_found(search_input, item.username):
+                results.append(item)
+        os.system('clear')
+        if results == []:
+            print("No results found")
+            time.sleep(1)
+            os.system('clear')
+        else:
+            selec = invoke_menu(results)
+            os.system('clear')
+            print("Account info deleted")
+            database_handler.delete_row(selec.site, selec.username)
+            time.sleep(1)
+            os.system('clear')
 
 def handle_table_delete(database_handler):
     """Handles table deletion"""
@@ -232,7 +248,7 @@ def handle_table_delete(database_handler):
 
 # ======================Search Menu Logic========================
 
-def invoke_menu(input_list: list, key: bytes):
+def invoke_menu(input_list: list):
     """
     Display the meny of options and prompt the user
     to select a valid option. Retrieve the password
