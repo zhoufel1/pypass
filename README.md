@@ -30,7 +30,7 @@ The program will prompt for the creation of a master password which will be used
 
 It is recommended for future convenience to a shell script to run the program.
 Here is an example script that will activate a virtual environment containing the dependencies, run the program, and deactivate the virtual environment on exit.
-'''
+```
 #!/bin/bash
 
 # Activate venv called 'password' containing the dependencies
@@ -42,7 +42,7 @@ cd $HOME/Other/Password-Manager-
 
 # Terminate venv on program close.
 deactivate
-'''
+```
 <img src="https://user-images.githubusercontent.com/44934000/52547424-94b86400-2d95-11e9-8fdb-46779f75612c.png" width="400"><img src="https://user-images.githubusercontent.com/44934000/52547415-8ec28300-2d95-11e9-8d79-6dbc7cf5f789.png" width="400">
 
 Since this program doesn't have a GUI, input numbers to access the various options.
