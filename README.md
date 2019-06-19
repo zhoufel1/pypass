@@ -5,7 +5,7 @@ A CLI based password manager for personal use. It generates cryptographically se
 <!--![compressed_example](https://user-images.githubusercontent.com/44934000/52548221-52ddec80-2d9a-11e9-8f07-50920cdc8b02.gif)-->
 
 ## Encryption
-It is essential that account data is encrypted before it is stored. This program uses the 'cryptography' library built on AES-128 in conjunction with PBKDF2 (SHA256) to generate keys. The passwords are salted using the secure random number generator from 'urandom'.
+It is essential that account data is encrypted before it is stored. This program uses the `cryptography` library built on AES-128 in conjunction with PBKDF2 (SHA256) to generate keys. The passwords are salted using the secure random number generator from `urandom`.
 
 ## Getting Started
 ### Setup and Dependencies
@@ -28,7 +28,7 @@ $ ./run
 ```
 The program will prompt for the creation of a master password which will be used to access the database on future use.
 
-It is recommended for future convenience to a shell script to run the program.<br/><br/>
+It is recommended for future convenience to a shell script to run the program.<br/>
 
 Here is an example script that will activate a virtual environment containing the dependencies, run the program, and deactivate the virtual environment on exit.
 ```
