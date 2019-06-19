@@ -40,20 +40,17 @@ def run() -> None:
     trigger = create_database(database_handler)
     key = key_generator(handle_password(trigger, database_handler))
 
-    # Initialize menu options
-    os.system('clear')
-    user_input = input("[1] Show entries\n" +
-                       "[2] Add new entry\n" +
-                       "[3] Update existing entry\n" +
-                       "[4] Delete existing entry\n" +
-                       "[5] Reset database\n" +
-                       "[6] Exit\n")
-
     # Menu loop
     while True:
         os.system('clear')
+        user_input = input("[1] Show entries\n" +
+                           "[2] Add new entry\n" +
+                           "[3] Update existing entry\n" +
+                           "[4] Delete existing entry\n" +
+                           "[5] Reset database\n" +
+                           "[6] Exit\n")
+        os.system('clear')
         if user_input == "1":
-            os.system('clear')
             search_input = input("[1] Search\n" +
                                  "[2] Show all\n")
             os.system('clear')
@@ -61,6 +58,7 @@ def run() -> None:
                 show_search_query(database_handler, key)
             elif search_input == '2':
                 show_all_data(database_handler, key)
+                input("Press Enter to continue...")
         elif user_input == "2":
             handle_data_input(database_handler, key)
         elif user_input == "3":
@@ -70,16 +68,11 @@ def run() -> None:
         elif user_input == "5":
             confirm = input("Are your sure? (Y/n)\n")
             if confirm == 'Y':
+                os.system('clear')
                 handle_table_delete(database_handler)
         elif user_input == "6":
             pyperclip.copy('')
             return 0
-        user_input = input("[1] Show entries\n" +
-                           "[2] Add new entry\n" +
-                           "[3] Update existing entry\n" +
-                           "[4] Delete existing entry\n" +
-                           "[5] Reset database\n" +
-                           "[6] Exit\n")
 
 
 def create_database(database_handler) -> bool:
@@ -100,18 +93,22 @@ def handle_password(trigger: bool, database_handler) -> str:
     Otherwise, prompt user to create a password for the database"""
 
     if trigger:
-        p_input = getpass("Enter your password: ")
-        if not checkpw(p_input.encode(), database_handler.retrieve_password()):
+        entry = getpass("Enter your password: ")
+        if not checkpw(entry.encode(), database_handler.retrieve_password()):
             raise Exception("Incorrect password")
-        return p_input
-    else:
-        while True:
-            first_entry = getpass("Enter a password for database: ")
-            second_entry = getpass("Re-enter the password: ")
-            if first_entry == second_entry:
-                database_handler.set_password(hash_password(first_entry))
-                return first_entry
-            print("*Passwords do not match*")
+        return entry
+
+    while True:
+        first_entry = getpass("Enter a password for database: ")
+        second_entry = getpass("Re-enter the password: ")
+        if first_entry == second_entry:
+            database_handler.set_password(hash_password(first_entry))
+            return first_entry
+
+        os.system('clear')
+        print("*Passwords do not match*")
+        time.sleep(1)
+        os.system('clear')
 
 
 def show_search_query(database_handler, key: bytes) -> None:
@@ -125,15 +122,11 @@ def show_search_query(database_handler, key: bytes) -> None:
         os.system('clear')
     else:
         search_input = input("\nEnter search: ").lower().strip(" ")
-        queries = database_handler.query_database()
-        results = []
-        for item in queries:
-            if is_found(search_input, item.site) or \
-                    is_found(search_input, item.username):
-                results.append(item)
+        results = [item for item in database_handler.query_database()
+                   if is_found(search_input, item.site)
+                   or is_found(search_input, item.username)]
         os.system('clear')
         if results == []:
-            os.system('clear')
             print('No results found')
             time.sleep(1)
             os.system('clear')
@@ -148,6 +141,7 @@ def show_search_query(database_handler, key: bytes) -> None:
 
 def show_all_data(database_handler, key: bytes) -> None:
     """Print all account information in the database"""
+
     queries = database_handler.query_all_entries()
     print("\n============Account Info============")
     for site in queries:
@@ -160,77 +154,82 @@ def show_all_data(database_handler, key: bytes) -> None:
 def handle_data_input(database_handler, key: bytes) -> None:
     """Prompts the user to enter account information and store it into the
     Account table in database as a row"""
+
     site = input("\nEnter site: ").lower().strip(" ")
     username = input("Enter username: ").lower().strip(" ")
+
     if database_handler.query_site_and_user(site, username) != {}:
+        os.system('clear')
         print("*Item already exists*")
+        time.sleep(1)
     else:
-        try:
+        while True:
             length = input("Password length? ")
-            password = Passgen(int(length)).gen_password()
-            database_handler.insert_data(site, username,
-                                         encrypt_password(password, key))
-            pyperclip.copy(password)
-            print("Password copied!")
-        except ValueError:
-            print("Invalid entry")
+            if length.isnumeric():
+                password = Passgen(int(length)).gen_password()
+                database_handler.insert_data(site, username,
+                                             encrypt_password(password, key))
+                pyperclip.copy(password)
+                os.system('clear')
+                print("Password copied!")
+                time.sleep(1)
+                return None
 
 
 def handle_data_update(database_handler, key: bytes) -> None:
     """Prompts the user to enter account information to update that row
     with a new generated password"""
+
     if database_handler.is_empty():
         print("Database is empty...")
         time.sleep(1)
         os.system('clear')
     else:
         search_input = input("\nEnter search: ").lower().strip(" ")
-        queries = database_handler.query_database()
-        results = []
-        for item in queries:
-            if is_found(search_input, item.site) or \
-                    is_found(search_input, item.username):
-                results.append(item)
+        results = [item for item in database_handler.query_database()
+                   if is_found(search_input, item.site)
+                   or is_found(search_input, item.username)]
         os.system('clear')
         if results == []:
             print("No results found")
             time.sleep(1)
             os.system('clear')
         else:
-            selec = invoke_menu(results)
+            selection = invoke_menu(results)
             password = Passgen(int(input("Length? "))).gen_password()
             new_password = encrypt_password(password, key)
-            database_handler.\
-                update_item(selec.site, selec.username, new_password)
+            database_handler.update_item(selection.site,
+                                         selection.username,
+                                         new_password)
             os.system('clear')
             pyperclip.copy(password)
             print("Password copied!")
+            time.sleep(1)
 
 
 def handle_data_delete(database_handler) -> None:
     """Handles row deletion"""
+
     if database_handler.is_empty():
         print("Database is empty...")
         time.sleep(1)
         os.system('clear')
     else:
         search_input = input("\nEnter search: ").lower().strip(" ")
-        queries = database_handler.query_database()
-        results = []
-        for item in queries:
-            if is_found(search_input, item.site) or \
-                    is_found(search_input, item.username):
-                results.append(item)
+        results = [item for item in database_handler.query_database()
+                   if is_found(search_input, item.site)
+                   or is_found(search_input, item.username)]
         os.system('clear')
         if results == []:
             print("No results found")
             time.sleep(1)
             os.system('clear')
         else:
-            selec = invoke_menu(results)
+            selection = invoke_menu(results)
             os.system('clear')
             print("Account info deleted")
-            database_handler.delete_row(selec.site, selec.username)
+            database_handler.delete_row(selection.site,
+                                        selection.username)
             time.sleep(1)
             os.system('clear')
 
@@ -238,16 +237,19 @@ def handle_table_delete(database_handler) -> None:
     """Handles table deletion"""
     password = getpass("You are about to wipe account info. " +
                        "Enter password to confirm: ")
+    os.system('clear')
     if not checkpw(password.encode(), database_handler.retrieve_password()):
         print("*Password incorrect. Aborted*")
+        time.sleep(1)
     else:
         print("Dropping table...")
+        time.sleep(1)
         database_handler.drop_tables()
 
 
 # ======================Search Menu Logic========================
 
-def invoke_menu(input_list: list) -> None:
+def invoke_menu(input_list: list):
     """
     Display the meny of options and prompt the user
     to select a valid option. Retrieve the password
@@ -257,14 +259,14 @@ def invoke_menu(input_list: list) -> None:
     options = build_menu_options(input_list)
     if options == {}:
         print("No items found")
-        time.sleep(0.5)
+        time.sleep(1)
         os.system('clear')
     show_menu(options)
     print('\n')
-    user_input = input("Which account? ").strip()
-    while not user_input.isnumeric():
-        user_input = input("Enter valid input: ").strip()
-    return options[int(user_input)]
+    while True:
+        user_input = input("Enter option: ").strip()
+        if user_input.isnumeric() and int(user_input) <= len(options):
+            return options[int(user_input)]
 
 
 def show_menu(menu_options: dict) -> None:
