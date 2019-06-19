@@ -53,5 +53,8 @@ To aid with accessing items in the repository, the program has a fuzzy searcher 
 #### Password Copying
 Passwords are copied to the clipboard directly after query. The system
 clipboard is purged after the program terminates.<br/>
+<img src="https://user-images.githubusercontent.com/44934000/59738354-f3ec2080-922e-11e9-84a7-bb5384fbad13.png" width="350">
+<img src="https://user-images.githubusercontent.com/44934000/59738353-f3ec2080-922e-11e9-9d11-fdb9b7c5abaa.png" width="350">
+<img stc="https://user-images.githubusercontent.com/44934000/59738352-f3ec2080-922e-11e9-864d-40b64fe247c0.png" width="350">
 
 _project by Felix Zhou._
