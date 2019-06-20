@@ -5,7 +5,7 @@ import pyperclip
 import time
 import passwords
 import getpass as gp
-import database_handler as db
+import database as db
 import encryption as enc
 import bcrypt
 import searching
@@ -25,15 +25,15 @@ def run() -> None:
     """Initialize the program"""
 
     # Create database handler object
-    database_handler = db.Database()
+    database = db.Database()
 
     os.system('clear')
     print("======================Password" +
           "Manager======================")
 
     # Handle password entry
-    trigger = create_database(database_handler)
-    key = enc.key_generator(handle_password(trigger, database_handler))
+    trigger = create_database(database)
+    key = enc.key_generator(handle_password(trigger, database))
 
     # Menu loop
     while True:
@@ -50,39 +50,39 @@ def run() -> None:
                                  "[2] Show all\n")
             os.system('clear')
             if search_input == '1':
-                show_search_query(database_handler, key)
+                show_search_query(database, key)
             elif search_input == '2':
-                show_all_data(database_handler, key)
+                show_all_data(database, key)
                 input("Press Enter to continue...")
         elif user_input == "2":
-            handle_data_input(database_handler, key)
+            handle_data_input(database, key)
         elif user_input == "3":
-            handle_data_update(database_handler, key)
+            handle_data_update(database, key)
         elif user_input == "4":
-            handle_data_delete(database_handler)
+            handle_data_delete(database)
         elif user_input == "5":
             confirm = input("Are your sure? (Y/n)\n")
             if confirm == 'Y':
                 os.system('clear')
-                handle_table_delete(database_handler)
+                handle_table_delete(database)
         elif user_input == "6":
             pyperclip.copy('')
             return 0
 
 
-def create_database(database_handler) -> bool:
+def create_database(database: db.Database) -> bool:
     """Return True if the database already exist. If not, create the database
     and return False"""
 
     if not os.path.exists('./account_database.db'):
         print("Creating account database...")
-        database_handler.create_database()
+        database.create_database()
         return False
     print("Accessing database...")
     return True
 
 
-def handle_password(trigger: bool, database_handler) -> str:
+def handle_password(trigger: bool, database: db.Database) -> str:
     """Return the user-inputted password as a string. If database is
     already created, check the inputted password with database password.
     Otherwise, prompt user to create a password for the database"""
@@ -90,7 +90,7 @@ def handle_password(trigger: bool, database_handler) -> str:
     if trigger:
         entry = gp.getpass("Enter your password: ")
         if not bcrypt.checkpw(entry.encode(),
-                              database_handler.retrieve_password()):
+                              database.retrieve_password()):
             raise Exception("Incorrect password")
         return entry
 
@@ -98,7 +98,7 @@ def handle_password(trigger: bool, database_handler) -> str:
         first_entry = gp.getpass("Enter a password for database: ")
         second_entry = gp.getpass("Re-enter the password: ")
         if first_entry == second_entry:
-            database_handler.set_password(enc.hash_password(first_entry))
+            database.set_password(enc.hash_password(first_entry))
             return first_entry
 
         os.system('clear')
@@ -107,25 +107,17 @@ def handle_password(trigger: bool, database_handler) -> str:
         os.system('clear')
 
 
-def show_search_query(database_handler, key: bytes) -> None:
+def show_search_query(database: db.Database, key: bytes) -> None:
     """Prompt the user to enter a search query and print all
     account information associated with that site. If multiple
     queries are found, have the user select."""
 
-    if database_handler.is_empty():
-        print("Database is empty...")
-        time.sleep(1)
-        os.system('clear')
+    if check_database_empty(database):
+        return None
     else:
-        search_input = input("\nEnter search: ").lower().strip(" ")
-        results = [item for item in database_handler.query_database()
-                   if searching.is_found(search_input, item.site)
-                   or searching.is_found(search_input, item.username)]
-        os.system('clear')
-        if results == []:
-            print('No results found')
-            time.sleep(1)
-            os.system('clear')
+        results = fuzzy_search(database)
+        if not results:
+            return None
         else:
             pyperclip.\
                 copy(enc.decrypt_password(invoke_menu(results).password, key))
@@ -135,10 +127,10 @@ def show_search_query(database_handler, key: bytes) -> None:
             os.system('clear')
 
 
-def show_all_data(database_handler, key: bytes) -> None:
+def show_all_data(database: db.Database, key: bytes) -> None:
     """Print all account information in the database"""
 
-    queries = database_handler.query_all_entries()
+    queries = database.query_all_entries()
     print("\n============Account Info============")
     for site in queries:
         print("*** " + site + ":")
@@ -147,14 +139,14 @@ def show_all_data(database_handler, key: bytes) -> None:
     print("====================================")
 
 
-def handle_data_input(database_handler, key: bytes) -> None:
+def handle_data_input(database: db.Database, key: bytes) -> None:
     """Prompts the user to enter account information and store it into the
     Account table in database as a row"""
 
     site = input("\nEnter site: ").lower().strip(" ")
     username = input("Enter username: ").lower().strip(" ")
 
-    if database_handler.query_site_and_user(site, username) != {}:
+    if database.query_site_and_user(site, username) != {}:
         os.system('clear')
         print("*Item already exists*")
         time.sleep(1)
@@ -163,7 +155,7 @@ def handle_data_input(database_handler, key: bytes) -> None:
             length = input("Password length? ")
             if length.isnumeric():
                 password = passwords.generate_password(int(length))
-                database_handler.insert_data(site,
+                database.insert_data(site,
                                              username,
                                              enc.encrypt_password(password,
                                                                   key))
@@ -174,77 +166,91 @@ def handle_data_input(database_handler, key: bytes) -> None:
                 return None
 
 
-def handle_data_update(database_handler, key: bytes) -> None:
+def handle_data_update(database: db.Database, key: bytes) -> None:
     """Prompts the user to enter account information to update that row
     with a new generated password"""
 
-    if database_handler.is_empty():
-        print("Database is empty...")
-        time.sleep(1)
-        os.system('clear')
+    if check_database_empty(database):
+        return None
     else:
-        search_input = input("\nEnter search: ").lower().strip(" ")
-        results = [item for item in database_handler.query_database()
-                   if searching.is_found(search_input, item.site)
-                   or searching.is_found(search_input, item.username)]
-        os.system('clear')
-        if results == []:
-            print("No results found")
-            time.sleep(1)
-            os.system('clear')
+        results = fuzzy_search(database)
+        if not results:
+            return None
         else:
             selection = invoke_menu(results)
             password = passwords.generate_password(int(input("Length? ")))
             new_password = enc.encrypt_password(password, key)
-            database_handler.update_item(selection.site,
-                                         selection.username,
-                                         new_password)
+            database.update_item(selection.site,
+                                 selection.username,
+                                 new_password)
             os.system('clear')
             pyperclip.copy(password)
             print("Password copied!")
             time.sleep(1)
 
 
-def handle_data_delete(database_handler) -> None:
+def handle_data_delete(database: db.Database) -> None:
     """Handles row deletion"""
 
-    if database_handler.is_empty():
-        print("Database is empty...")
-        time.sleep(1)
-        os.system('clear')
+    if check_database_empty(database):
+        return None
     else:
-        search_input = input("\nEnter search: ").lower().strip(" ")
-        results = [item for item in database_handler.query_database()
-                   if searching.is_found(search_input, item.site)
-                   or searching.is_found(search_input, item.username)]
-        os.system('clear')
-        if results == []:
-            print("No results found")
-            time.sleep(1)
-            os.system('clear')
+        results = fuzzy_search(database)
+        if not results:
+            return None
         else:
             selection = invoke_menu(results)
             os.system('clear')
             print("Account info deleted")
-            database_handler.delete_row(selection.site,
+            database.delete_row(selection.site,
                                         selection.username)
             time.sleep(1)
             os.system('clear')
 
 
-def handle_table_delete(database_handler) -> None:
+def handle_table_delete(database: db.Database) -> None:
     """Handles table deletion"""
     password = gp.getpass("You are about to wipe account info. " +
                           "Enter password to confirm: ")
     os.system('clear')
     if not bcrypt.checkpw(password.encode(),
-                          database_handler.retrieve_password()):
+                          database.retrieve_password()):
         print("*Password incorrect. Aborted*")
         time.sleep(1)
     else:
         print("Dropping table...")
         time.sleep(1)
-        database_handler.drop_tables()
+        database.drop_tables()
+
+
+def check_database_empty(database: db.Database) -> bool:
+    """Return True if <database> is empty, that is it has
+    no entries. Otherwise, return False.
+    """
+    if database.is_empty():
+        print("Database is empty...")
+        time.sleep(1)
+        os.system('clear')
+        return True
+    return False
+
+
+def fuzzy_search(database: db.Database) -> list:
+    """
+    Prompt the user for a query and return a list
+    containing items that the fuzzy search yields.
+    """
+
+    search_input = input("\nEnter search: ").lower().strip(" ")
+    results = [item for item in database.query_database()
+               if searching.is_found(search_input, item.site)
+               or searching.is_found(search_input, item.username)]
+    os.system('clear')
+    if not results:
+        print('No results found')
+        time.sleep(1)
+        os.system('clear')
+    return results
 
 
 # ======================Search Menu Logic========================
@@ -257,7 +263,7 @@ def invoke_menu(input_list: list):
 
     """
     options = build_menu_options(input_list)
-    if options == {}:
+    if not options:
         print("No items found")
         time.sleep(1)
         os.system('clear')
