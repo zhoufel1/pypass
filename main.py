@@ -3,6 +3,7 @@
 import os
 import pyperclip
 import time
+import password
 from getpass import getpass
 import database_handler as db
 from encryption import (
@@ -11,7 +12,7 @@ from encryption import (
         decrypt_password,
         hash_password
         )
-from passgen import Passgen
+from password import generate_password
 from bcrypt import checkpw
 from searching import is_found
 
@@ -166,7 +167,7 @@ def handle_data_input(database_handler, key: bytes) -> None:
         while True:
             length = input("Password length? ")
             if length.isnumeric():
-                password = Passgen(int(length)).gen_password()
+                password = password.generate_password(int(length))
                 database_handler.insert_data(site, username,
                                              encrypt_password(password, key))
                 pyperclip.copy(password)
@@ -196,7 +197,7 @@ def handle_data_update(database_handler, key: bytes) -> None:
             os.system('clear')
         else:
             selection = invoke_menu(results)
-            password = Passgen(int(input("Length? "))).gen_password()
+            password = password.generate_password(int(input("Length? ")))
             new_password = encrypt_password(password, key)
             database_handler.update_item(selection.site,
                                          selection.username,
