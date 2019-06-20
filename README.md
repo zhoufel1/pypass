@@ -48,7 +48,7 @@ deactivate
 
 #### Fuzzy searching
 To aid with accessing items in the repository, the program has a fuzzy searcher which will return items associated with the user query.<br/>
-<img src="https://user-images.githubusercontent.com/44934000/59738201-66103580-922e-11e9-9836-7fafbb7cc452.png" width="350"><img src="https://user-images.githubusercontent.com/44934000/59738201-66103580-922e-11e9-9836-7fafbb7cc452.png" width="350">
+<img src="https://user-images.githubusercontent.com/44934000/59738202-66103580-922e-11e9-8f1b-793cbbfe1cdd.png" width="350"><img src="https://user-images.githubusercontent.com/44934000/59738201-66103580-922e-11e9-9836-7fafbb7cc452.png" width="350">
 
 #### Password Copying
 Passwords are copied to the clipboard directly after query. The system
