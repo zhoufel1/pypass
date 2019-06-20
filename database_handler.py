@@ -1,71 +1,69 @@
 #!/usr/bin/env python3
 
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import sqlalchemy as sql
+from sqlalchemy.ext import declarative
+from sqlalchemy import orm
 
 
-class DatabaseHandler():
+class Database:
     """A class used for handling database operations"""
     # Base class for tables
-    Base = declarative_base()
+    Base = declarative.declarative_base()
 
     # Account class for tables
     class Account(Base):
         """An account in the database."""
-        __tablename__ = 'account'
-        id = Column(Integer, primary_key=True)
-        site = Column(String)
-        username = Column(String)
-        password = Column(String)
 
-        def __repr__(self):
-            return "<Account(site='{}', username='{}', password='{}')>".\
-                format(self.site, self.username, self.password)
+        __tablename__ = 'account'
+        id = sql.Column(sql.Integer, primary_key=True)
+        site = sql.Column(sql.String)
+        username = sql.Column(sql.String)
+        password = sql.Column(sql.String)
 
     # Password class for tables
     class Password(Base):
         """A password in the database."""
+
         __tablename__ = 'password'
-        id = Column(Integer, primary_key=True)
-        password = Column(String)
+        id = sql.Column(sql.Integer, primary_key=True)
+        password = sql.Column(sql.String)
 
     def __init__(self) -> None:
         """Initialize the database handler"""
-        self.engine = create_engine('sqlite:///account_database.db')
+
+        self.engine = sql.create_engine('sqlite:///account_database.db')
         self.Base.metadata.bind = self.engine
-        self.DBSession = sessionmaker(bind=self.engine)
+        self.DBSession = orm.sessionmaker(bind=self.engine)
         self.session = self.DBSession()
 
     def create_database(self) -> None:
         """Creates an sqlite database"""
+
         self.Base.metadata.create_all(self.engine)
 
     def insert_data(self, site: str,
                     username: str, password: str) -> None:
         """Inserts the site, username, and password into the database"""
+
         self.session.add(self.Account(site=site,
                                       username=username, password=password))
         self.session.commit()
 
     def query_database(self,
-                       site: str = None, username: str = None) -> dict:
+                       site: str = None, username: str = None) -> list:
         """
         Return all queries in the database.
         """
-        results = {}
-        query_all = self.session.query(self.Account).all()
-        results = [x for x in query_all]
-        return results
+
+        return self.session.query(self.Account).all()
 
     def query_site_and_user(self, site: str, username: str) -> dict:
         """Return an account with site and username."""
+
         results = {}
-        query = self.session.query(self.Account).\
+        queries = self.session.query(self.Account).\
             filter(self.Account.site == site).\
             filter(self.Account.username == username)
-        queries = [x for x in query]
         for instance in queries:
             if instance.site not in results:
                 results[instance.site] = [instance]
@@ -77,19 +75,20 @@ class DatabaseHandler():
         """Return a dictionary of queries, where each
         key denotes a site and the values are the
         websites associated with the key."""
+
         results = {}
         query_all = self.session.query(self.Account).all()
         sites = sorted({x.site for x in query_all})
         for item in sites:
             query = self.session.\
                     query(self.Account).filter(self.Account.site == item)
-            results[item] = [x for x in query]
+            results[item] = query
         return results
 
     def is_empty(self) -> bool:
         """Return True if the database is empty, False otherwise."""
-        results = self.query_database()
-        return len(results) == 0
+
+        return not self.query_database()
 
     def update_item(self,
                     site: str, username: str, new_password: str) -> None:

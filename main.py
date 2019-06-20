@@ -30,7 +30,7 @@ def run() -> None:
     """Initialize the program"""
 
     # Create database handler object
-    database_handler = db.DatabaseHandler()
+    database_handler = db.Database()
 
     os.system('clear')
     print("======================Password" +
