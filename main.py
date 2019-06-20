@@ -4,16 +4,11 @@ import os
 import pyperclip
 import time
 import passwords
-from getpass import getpass
+import getpass as gp
 import database_handler as db
-from encryption import (
-        key_generator,
-        encrypt_password,
-        decrypt_password,
-        hash_password
-        )
-from bcrypt import checkpw
-from searching import is_found
+import encryption as enc
+import bcrypt
+import searching
 
 
 class PasswordError(Exception):
@@ -38,7 +33,7 @@ def run() -> None:
 
     # Handle password entry
     trigger = create_database(database_handler)
-    key = key_generator(handle_password(trigger, database_handler))
+    key = enc.key_generator(handle_password(trigger, database_handler))
 
     # Menu loop
     while True:
@@ -93,16 +88,17 @@ def handle_password(trigger: bool, database_handler) -> str:
     Otherwise, prompt user to create a password for the database"""
 
     if trigger:
-        entry = getpass("Enter your password: ")
-        if not checkpw(entry.encode(), database_handler.retrieve_password()):
+        entry = gp.getpass("Enter your password: ")
+        if not bcrypt.checkpw(entry.encode(),
+                              database_handler.retrieve_password()):
             raise Exception("Incorrect password")
         return entry
 
     while True:
-        first_entry = getpass("Enter a password for database: ")
-        second_entry = getpass("Re-enter the password: ")
+        first_entry = gp.getpass("Enter a password for database: ")
+        second_entry = gp.getpass("Re-enter the password: ")
         if first_entry == second_entry:
-            database_handler.set_password(hash_password(first_entry))
+            database_handler.set_password(enc.hash_password(first_entry))
             return first_entry
 
         os.system('clear')
@@ -123,8 +119,8 @@ def show_search_query(database_handler, key: bytes) -> None:
     else:
         search_input = input("\nEnter search: ").lower().strip(" ")
         results = [item for item in database_handler.query_database()
-                   if is_found(search_input, item.site)
-                   or is_found(search_input, item.username)]
+                   if searching.is_found(search_input, item.site)
+                   or searching.is_found(search_input, item.username)]
         os.system('clear')
         if results == []:
             print('No results found')
@@ -132,7 +128,7 @@ def show_search_query(database_handler, key: bytes) -> None:
             os.system('clear')
         else:
             pyperclip.\
-                copy(decrypt_password(invoke_menu(results).password, key))
+                copy(enc.decrypt_password(invoke_menu(results).password, key))
             os.system('clear')
             print("Password copied")
             time.sleep(1)
@@ -147,7 +143,7 @@ def show_all_data(database_handler, key: bytes) -> None:
     for site in queries:
         print("*** " + site + ":")
         for item in queries[site]:
-            print(item.username, decrypt_password(item.password, key))
+            print(item.username, enc.decrypt_password(item.password, key))
     print("====================================")
 
 
@@ -167,8 +163,10 @@ def handle_data_input(database_handler, key: bytes) -> None:
             length = input("Password length? ")
             if length.isnumeric():
                 password = passwords.generate_password(int(length))
-                database_handler.insert_data(site, username,
-                                             encrypt_password(password, key))
+                database_handler.insert_data(site,
+                                             username,
+                                             enc.encrypt_password(password,
+                                                                  key))
                 pyperclip.copy(password)
                 os.system('clear')
                 print("Password copied!")
@@ -187,8 +185,8 @@ def handle_data_update(database_handler, key: bytes) -> None:
     else:
         search_input = input("\nEnter search: ").lower().strip(" ")
         results = [item for item in database_handler.query_database()
-                   if is_found(search_input, item.site)
-                   or is_found(search_input, item.username)]
+                   if searching.is_found(search_input, item.site)
+                   or searching.is_found(search_input, item.username)]
         os.system('clear')
         if results == []:
             print("No results found")
@@ -197,7 +195,7 @@ def handle_data_update(database_handler, key: bytes) -> None:
         else:
             selection = invoke_menu(results)
             password = passwords.generate_password(int(input("Length? ")))
-            new_password = encrypt_password(password, key)
+            new_password = enc.encrypt_password(password, key)
             database_handler.update_item(selection.site,
                                          selection.username,
                                          new_password)
@@ -217,8 +215,8 @@ def handle_data_delete(database_handler) -> None:
     else:
         search_input = input("\nEnter search: ").lower().strip(" ")
         results = [item for item in database_handler.query_database()
-                   if is_found(search_input, item.site)
-                   or is_found(search_input, item.username)]
+                   if searching.is_found(search_input, item.site)
+                   or searching.is_found(search_input, item.username)]
         os.system('clear')
         if results == []:
             print("No results found")
@@ -233,12 +231,14 @@ def handle_data_delete(database_handler) -> None:
             time.sleep(1)
             os.system('clear')
 
+
 def handle_table_delete(database_handler) -> None:
     """Handles table deletion"""
-    password = getpass("You are about to wipe account info. " +
-                       "Enter password to confirm: ")
+    password = gp.getpass("You are about to wipe account info. " +
+                          "Enter password to confirm: ")
     os.system('clear')
-    if not checkpw(password.encode(), database_handler.retrieve_password()):
+    if not bcrypt.checkpw(password.encode(),
+                          database_handler.retrieve_password()):
         print("*Password incorrect. Aborted*")
         time.sleep(1)
     else:
