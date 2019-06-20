@@ -223,36 +223,6 @@ def handle_table_delete(database: db.Database) -> None:
         database.drop_tables()
 
 
-def check_database_empty(database: db.Database) -> bool:
-    """Return True if <database> is empty, that is it has
-    no entries. Otherwise, return False.
-    """
-    if database.is_empty():
-        print("Database is empty...")
-        time.sleep(1)
-        os.system('clear')
-        return True
-    return False
-
-
-def fuzzy_search(database: db.Database) -> list:
-    """
-    Prompt the user for a query and return a list
-    containing items that the fuzzy search yields.
-    """
-
-    search_input = input("\nEnter search: ").lower().strip(" ")
-    results = [item for item in database.query_database()
-               if searching.is_found(search_input, item.site)
-               or searching.is_found(search_input, item.username)]
-    os.system('clear')
-    if not results:
-        print('No results found')
-        time.sleep(1)
-        os.system('clear')
-    return results
-
-
 # ======================Search Menu Logic========================
 
 def invoke_menu(input_list: list):
@@ -292,6 +262,36 @@ def build_menu_options(input_list: list) -> list:
     results = {}
     for i in range(len(input_list)):
         results[i + 1] = input_list[i]
+    return results
+
+
+def check_database_empty(database: db.Database) -> bool:
+    """Return True if <database> is empty, that is it has
+    no entries. Otherwise, return False.
+    """
+    if database.is_empty():
+        print("Database is empty...")
+        time.sleep(1)
+        os.system('clear')
+        return True
+    return False
+
+
+def fuzzy_search(database: db.Database) -> list:
+    """
+    Prompt the user for a query and return a list
+    containing items that the fuzzy search yields.
+    """
+
+    search_input = input("\nEnter search: ").lower().strip(" ")
+    results = [item for item in database.query_database()
+               if searching.is_found(search_input, item.site)
+               or searching.is_found(search_input, item.username)]
+    os.system('clear')
+    if not results:
+        print('No results found')
+        time.sleep(1)
+        os.system('clear')
     return results
 
 
