@@ -9,6 +9,7 @@ import database as db
 import encryption as enc
 import bcrypt
 import searching
+from typing import Optional
 
 
 class PasswordError(Exception):
@@ -37,37 +38,46 @@ def run() -> None:
 
     # Menu loop
     while True:
+        if on_loop(database, key) == 0:
+            return None
+
+
+def on_loop(database: db.Database, key: bytes) -> Optional[int]:
+    """
+    Loop the menu once based on user input. Return 0
+    if the user opts to terminate the program.
+    """
+    os.system('clear')
+    user_input = input("[f] Show entries\n" +
+                       "[j] Add new entry\n" +
+                       "[k] Update existing entry\n" +
+                       "[o] Delete existing entry\n" +
+                       "[O] Reset database\n" +
+                       "[x] Exit\n")
+    os.system('clear')
+    if user_input == "f":
+        search_input = input("[f] Search\n" +
+                             "[a] Show all\n")
         os.system('clear')
-        user_input = input("[1] Show entries\n" +
-                           "[2] Add new entry\n" +
-                           "[3] Update existing entry\n" +
-                           "[4] Delete existing entry\n" +
-                           "[5] Reset database\n" +
-                           "[6] Exit\n")
-        os.system('clear')
-        if user_input == "1":
-            search_input = input("[1] Search\n" +
-                                 "[2] Show all\n")
+        if search_input == 'f':
+            show_search_query(database, key)
+        elif search_input == 'a':
+            show_all_data(database, key)
+            input("Press Enter to continue...")
+    elif user_input == "j":
+        handle_data_input(database, key)
+    elif user_input == "k":
+        handle_data_update(database, key)
+    elif user_input == "o":
+        handle_data_delete(database)
+    elif user_input == "O":
+        confirm = input("Are your sure? (Y/n)\n")
+        if confirm == 'Y':
             os.system('clear')
-            if search_input == '1':
-                show_search_query(database, key)
-            elif search_input == '2':
-                show_all_data(database, key)
-                input("Press Enter to continue...")
-        elif user_input == "2":
-            handle_data_input(database, key)
-        elif user_input == "3":
-            handle_data_update(database, key)
-        elif user_input == "4":
-            handle_data_delete(database)
-        elif user_input == "5":
-            confirm = input("Are your sure? (Y/n)\n")
-            if confirm == 'Y':
-                os.system('clear')
-                handle_table_delete(database)
-        elif user_input == "6":
-            pyperclip.copy('')
-            return 0
+            handle_table_delete(database)
+    elif user_input == "x":
+        pyperclip.copy('')
+        return 0
 
 
 def create_database(database: db.Database) -> bool:
@@ -156,9 +166,9 @@ def handle_data_input(database: db.Database, key: bytes) -> None:
             if length.isnumeric():
                 password = passwords.generate_password(int(length))
                 database.insert_data(site,
-                                             username,
-                                             enc.encrypt_password(password,
-                                                                  key))
+                                     username,
+                                     enc.encrypt_password(password,
+                                                          key))
                 pyperclip.copy(password)
                 os.system('clear')
                 print("Password copied!")
@@ -203,7 +213,7 @@ def handle_data_delete(database: db.Database) -> None:
             os.system('clear')
             print("Account info deleted")
             database.delete_row(selection.site,
-                                        selection.username)
+                                selection.username)
             time.sleep(1)
             os.system('clear')
 
