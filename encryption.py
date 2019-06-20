@@ -12,16 +12,14 @@ def key_generator(password: str) -> bytes:
     from the <password>.
     """
 
-    encoded_pass = password.encode()
-    salt = b'\xbf\x07\xfc\xb2Y\x80\xbas\xb4\x02\x0f\x84\x9da\xb3\xfb'
     kdf = pbkdf2.PBKDF2HMAC(
         algorithm=primitives.hashes.SHA256(),
         length=32,
-        salt=salt,
+        salt=b'\xbf\x07\xfc\xb2Y\x80\xbas\xb4\x02\x0f\x84\x9da\xb3\xfb',
         iterations=100000,
         backend=backends.default_backend()
-    )
-    return base64.urlsafe_b64encode(kdf.derive(encoded_pass))
+        )
+    return base64.urlsafe_b64encode(kdf.derive(password.encode()))
 
 
 def encrypt_password(password: str, key: bytes) -> str:
