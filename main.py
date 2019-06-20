@@ -12,7 +12,6 @@ from encryption import (
         decrypt_password,
         hash_password
         )
-from password import generate_password
 from bcrypt import checkpw
 from searching import is_found
 
