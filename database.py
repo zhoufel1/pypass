@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import sqlalchemy as sql
 from sqlalchemy.ext import declarative
 from sqlalchemy import orm
