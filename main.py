@@ -34,8 +34,8 @@ def run() -> None:
     trigger = create_database(database)
     key = enc.key_generator(handle_password(trigger, database))
 
-    men = build_menu()
-    menu_loop(men, database, key)
+    main_menu = build_menu()
+    menu_loop(main_menu, database, key)
 
 
 def build_menu() -> menu.Menu:
@@ -44,6 +44,7 @@ def build_menu() -> menu.Menu:
     search_menu = menu.Menu('Show entries', base_menu)
     search_menu.add_option(menu.Option('Search', show_search_query))
     search_menu.add_option(menu.Option('Show all', show_all_data))
+
     base_menu.add_option(search_menu)
     base_menu.add_option(menu.Option('Add new entry', handle_data_input))
     base_menu.add_option(menu.Option('Delete existing entry',
@@ -52,35 +53,35 @@ def build_menu() -> menu.Menu:
     return base_menu
 
 
-def menu_loop(men: menu.Menu,
+def menu_loop(main_menu: menu.Menu,
               database: db.Database, key: bytes) -> Optional[int]:
     """Loop the main menu of the program."""
     os.system('tput civis')
     while True:
         os.system('clear')
-        men.print_options()
+        main_menu.print_options()
         user_input = menu.Getch()()
         if user_input == 'k':
-            men.point_prev()
+            main_menu.point_prev()
         elif user_input == 'j':
-            men.point_next()
+            main_menu.point_next()
         elif user_input == 'l':
-            if isinstance(men.pointer, menu.Menu):
-                menu_loop(men.pointer, database, key)
+            if isinstance(main_menu.pointer, menu.Menu):
+                menu_loop(main_menu.pointer, database, key)
                 break
-            elif isinstance(men.pointer, menu.Option):
+            elif isinstance(main_menu.pointer, menu.Option):
                 os.system('clear')
-                if men.pointer.func == show_all_data:
-                    men.pointer.func(database, key)
+                if main_menu.pointer.func == show_all_data:
+                    main_menu.pointer.func(database, key)
                     input("Press Enter to continue...")
-                elif men.pointer.func.__code__.co_argcount \
+                elif main_menu.pointer.func.__code__.co_argcount \
                         == 2:
-                    men.pointer.func(database, key)
+                    main_menu.pointer.func(database, key)
                 else:
-                    men.pointer.func(database)
+                    main_menu.pointer.func(database)
         elif user_input == 'h':
-            if men.parent is not None:
-                menu_loop(men.parent, database, key)
+            if main_menu.parent is not None:
+                menu_loop(main_menu.parent, database, key)
                 break
         elif user_input == 'q':
             os.system('clear')
