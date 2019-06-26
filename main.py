@@ -147,11 +147,13 @@ def show_search_query(database: db.Database, key: bytes) -> None:
     account information associated with that site. If multiple
     queries are found, have the user select."""
 
+    os.system('tput cnorm')
     if check_database_empty(database):
         return None
     else:
         results = fuzzy_search(database)
         if not results:
+            os.system('tput civis')
             return None
         else:
             pyperclip.\
@@ -160,7 +162,7 @@ def show_search_query(database: db.Database, key: bytes) -> None:
             print("Password copied")
             time.sleep(1)
             os.system('clear')
-
+            os.system('tput civis')
 
 def show_all_data(database: db.Database, key: bytes) -> None:
     """Print all account information in the database"""
@@ -181,6 +183,7 @@ def handle_data_input(database: db.Database, key: bytes) -> None:
     """Prompts the user to enter account information and store it into the
     Account table in database as a row"""
 
+    os.system('tput cnorm')
     site = input("\nEnter site: ").lower().strip(" ")
     username = input("Enter username: ").lower().strip(" ")
 
@@ -201,6 +204,7 @@ def handle_data_input(database: db.Database, key: bytes) -> None:
                 os.system('clear')
                 print("Password copied!")
                 time.sleep(1)
+                os.system('tput civis')
                 return None
 
 
@@ -208,6 +212,7 @@ def handle_existing_password_input(database: db.Database, key: bytes) -> None:
     """Prompts the user to enter account information and password
     and store it int the Account table in database as a row."""
 
+    os.system('tput cnorm')
     site = input("\nEnter site: ").lower().strip(" ")
     username = input("Enter username: ").lower().strip(" ")
     password = input("Enter password: ").strip(" ")
@@ -223,17 +228,20 @@ def handle_existing_password_input(database: db.Database, key: bytes) -> None:
         os.system('clear')
         print("Account information stored")
         time.sleep(1)
+    os.system('tput civis')
 
 
 def handle_data_update(database: db.Database, key: bytes) -> None:
     """Prompts the user to enter account information to update that row
     with a new generated password"""
 
+    os.system('tput cnorm')
     if check_database_empty(database):
         return None
     else:
         results = fuzzy_search(database)
         if not results:
+            os.system('tput civis')
             return None
         else:
             selection = invoke_menu(results)
@@ -246,16 +254,19 @@ def handle_data_update(database: db.Database, key: bytes) -> None:
             pyperclip.copy(password)
             print("Password copied!")
             time.sleep(1)
+            os.system('tput civis')
 
 
 def handle_data_delete(database: db.Database) -> None:
     """Handles row deletion"""
 
+    os.system('tput cnorm')
     if check_database_empty(database):
         return None
     else:
         results = fuzzy_search(database)
         if not results:
+            os.system('tput civis')
             return None
         else:
             selection = invoke_menu(results)
@@ -265,6 +276,7 @@ def handle_data_delete(database: db.Database) -> None:
                                 selection.username)
             time.sleep(1)
             os.system('clear')
+            os.system('tput civis')
 
 
 def handle_table_delete(database: db.Database) -> None:
