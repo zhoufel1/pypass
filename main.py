@@ -8,7 +8,8 @@ import getpass as gp
 import database as db
 import encryption as enc
 import bcrypt
-import searching
+import search
+import menu
 from typing import Optional
 
 
@@ -25,59 +26,66 @@ class PasswordError(Exception):
 def run() -> None:
     """Initialize the program"""
 
-    # Create database handler object
     database = db.Database()
 
     os.system('clear')
-    print("======================Password" +
-          "Manager======================")
+    print("━━━━━━━━━━━Password Manager━━━━━━━━━━━")
 
-    # Handle password entry
     trigger = create_database(database)
     key = enc.key_generator(handle_password(trigger, database))
 
-    # Menu loop
+    men = build_menu()
+    menu_loop(men, database, key)
+
+
+def build_menu() -> menu.Menu:
+    """Return a menu.Menu containing the menu tree for the program."""
+    base_menu = menu.Menu(None)
+    search_menu = menu.Menu('Show entries', base_menu)
+    search_menu.add_option(menu.Option('Search', show_search_query))
+    search_menu.add_option(menu.Option('Show all', show_all_data))
+    base_menu.add_option(search_menu)
+    base_menu.add_option(menu.Option('Add new entry', handle_data_input))
+    base_menu.add_option(menu.Option('Delete existing entry',
+                         handle_data_delete))
+    base_menu.add_option(menu.Option('Reset database', handle_table_delete))
+    return base_menu
+
+
+def menu_loop(men: menu.Menu,
+              database: db.Database, key: bytes) -> Optional[int]:
+    """Loop the main menu of the program."""
+    os.system('tput civis')
     while True:
-        if on_loop(database, key) == 0:
-            return None
-
-
-def on_loop(database: db.Database, key: bytes) -> Optional[int]:
-    """
-    Loop the menu once based on user input. Return 0
-    if the user opts to terminate the program.
-    """
-    os.system('clear')
-    user_input = input("[f] Show entries\n" +
-                       "[j] Add new entry\n" +
-                       "[k] Update existing entry\n" +
-                       "[o] Delete existing entry\n" +
-                       "[O] Reset database\n" +
-                       "[x] Exit\n")
-    os.system('clear')
-    if user_input == "f":
-        search_input = input("[f] Search\n" +
-                             "[a] Show all\n")
         os.system('clear')
-        if search_input == 'f':
-            show_search_query(database, key)
-        elif search_input == 'a':
-            show_all_data(database, key)
-            input("Press Enter to continue...")
-    elif user_input == "j":
-        handle_data_input(database, key)
-    elif user_input == "k":
-        handle_data_update(database, key)
-    elif user_input == "o":
-        handle_data_delete(database)
-    elif user_input == "O":
-        confirm = input("Are your sure? (Y/n)\n")
-        if confirm == 'Y':
+        men.print_options()
+        user_input = menu.Getch()()
+        if user_input == 'k':
+            men.point_prev()
+        elif user_input == 'j':
+            men.point_next()
+        elif user_input == 'l':
+            if isinstance(men.pointer, menu.Menu):
+                menu_loop(men.pointer, database, key)
+                break
+            elif isinstance(men.pointer, menu.Option):
+                os.system('clear')
+                if men.pointer.func == show_all_data:
+                    men.pointer.func(database, key)
+                    input("Press Enter to continue...")
+                elif men.pointer.func.__code__.co_argcount \
+                        == 2:
+                    men.pointer.func(database, key)
+                else:
+                    men.pointer.func(database)
+        elif user_input == 'h':
+            if men.parent is not None:
+                menu_loop(men.parent, database, key)
+                break
+        elif user_input == 'q':
             os.system('clear')
-            handle_table_delete(database)
-    elif user_input == "x":
-        pyperclip.copy('')
-        return 0
+            os.system('tput cnorm')
+            return None
 
 
 def create_database(database: db.Database) -> bool:
@@ -141,12 +149,15 @@ def show_all_data(database: db.Database, key: bytes) -> None:
     """Print all account information in the database"""
 
     queries = database.query_all_entries()
-    print("\n============Account Info============")
-    for site in queries:
-        print("*** " + site + ":")
-        for item in queries[site]:
-            print(item.username, enc.decrypt_password(item.password, key))
-    print("====================================")
+    if not queries:
+        print("No items found\n")
+    else:
+        print("\n━━━━━━━━━━━━Account Info━━━━━━━━━━━━")
+        for site in queries:
+            print("*** " + site + ":")
+            for item in queries[site]:
+                print(item.username, enc.decrypt_password(item.password, key))
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
 
 
 def handle_data_input(database: db.Database, key: bytes) -> None:
@@ -295,8 +306,8 @@ def fuzzy_search(database: db.Database) -> list:
 
     search_input = input("\nEnter search: ").lower().strip(" ")
     results = [item for item in database.query_database()
-               if searching.is_found(search_input, item.site)
-               or searching.is_found(search_input, item.username)]
+               if search.is_found(search_input, item.site)
+               or search.is_found(search_input, item.username)]
     os.system('clear')
     if not results:
         print('No results found')
