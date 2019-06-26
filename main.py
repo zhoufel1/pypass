@@ -34,29 +34,45 @@ def run() -> None:
     trigger = create_database(database)
     key = enc.key_generator(handle_password(trigger, database))
 
-    main_menu = build_menu()
+    main_menu = build_main_menu()
     menu_loop(main_menu, database, key)
 
 
-def build_menu() -> menu.Menu:
+def build_main_menu() -> menu.Menu:
     """Return a menu.Menu containing the menu tree for the program."""
     base_menu = menu.Menu(None)
-    search_menu = menu.Menu('Show entries', base_menu)
-    search_menu.add_option(menu.Option('Search', show_search_query))
-    search_menu.add_option(menu.Option('Show all', show_all_data))
-
-    base_menu.add_option(search_menu)
-    base_menu.add_option(menu.Option('Add new entry', handle_data_input))
+    base_menu.add_option(build_search_menu(base_menu))
+    base_menu.add_option(build_input_menu(base_menu))
     base_menu.add_option(menu.Option('Delete existing entry',
                          handle_data_delete))
     base_menu.add_option(menu.Option('Reset database', handle_table_delete))
     return base_menu
 
 
+def build_search_menu(base_menu: menu.Menu) -> menu.Menu:
+    """Return a menu.Menu containing the options for the
+    search branch of the menu tree."""
+    search_menu = menu.Menu('Show entries', base_menu)
+    search_menu.add_option(menu.Option('Search', show_search_query))
+    search_menu.add_option(menu.Option('Show all', show_all_data))
+    return search_menu
+
+
+def build_input_menu(base_menu: menu.Menu) -> menu.Menu:
+    """Return a menu.Menu containing the options for the
+    input branch of the menu tree."""
+    input_menu = menu.Menu('Add new entry', base_menu)
+    input_menu.add_option(menu.Option('Generate password', handle_data_input))
+    input_menu.add_option(menu.Option('Enter existing password',
+                          handle_existing_password_input))
+    return input_menu
+
+
 def menu_loop(main_menu: menu.Menu,
               database: db.Database, key: bytes) -> Optional[int]:
-    """Loop the main menu of the program."""
+    """The loop for the main menu of the program."""
     os.system('tput civis')
+
     while True:
         os.system('clear')
         main_menu.print_options()
@@ -186,6 +202,27 @@ def handle_data_input(database: db.Database, key: bytes) -> None:
                 print("Password copied!")
                 time.sleep(1)
                 return None
+
+
+def handle_existing_password_input(database: db.Database, key: bytes) -> None:
+    """Prompts the user to enter account information and password
+    and store it int the Account table in database as a row."""
+
+    site = input("\nEnter site: ").lower().strip(" ")
+    username = input("Enter username: ").lower().strip(" ")
+    password = input("Enter password: ").strip(" ")
+
+    if database.query_site_and_user(site, username) != {}:
+        os.system('clear')
+        print("*Item already exists*")
+        time.sleep(1)
+    else:
+        database.insert_data(site,
+                             username,
+                             enc.encrypt_password(password, key))
+        os.system('clear')
+        print("Account information stored")
+        time.sleep(1)
 
 
 def handle_data_update(database: db.Database, key: bytes) -> None:
