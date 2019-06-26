@@ -44,8 +44,8 @@ def build_main_menu() -> menu.Menu:
     base_menu.add_option(build_search_menu(base_menu))
     base_menu.add_option(build_input_menu(base_menu))
     base_menu.add_option(menu.Option('Delete existing entry',
-                         handle_data_delete))
-    base_menu.add_option(menu.Option('Reset database', handle_table_delete))
+                         delete_data))
+    base_menu.add_option(menu.Option('Reset database', delete_all))
     return base_menu
 
 
@@ -53,8 +53,8 @@ def build_search_menu(base_menu: menu.Menu) -> menu.Menu:
     """Return a menu.Menu containing the options for the
     search branch of the menu tree."""
     search_menu = menu.Menu('Show entries', base_menu)
-    search_menu.add_option(menu.Option('Search', show_search_query))
-    search_menu.add_option(menu.Option('Show all', show_all_data))
+    search_menu.add_option(menu.Option('Search', show_search))
+    search_menu.add_option(menu.Option('Show all', show_all))
     return search_menu
 
 
@@ -62,9 +62,9 @@ def build_input_menu(base_menu: menu.Menu) -> menu.Menu:
     """Return a menu.Menu containing the options for the
     input branch of the menu tree."""
     input_menu = menu.Menu('Add new entry', base_menu)
-    input_menu.add_option(menu.Option('Generate password', handle_data_input))
+    input_menu.add_option(menu.Option('Generate password', input_data))
     input_menu.add_option(menu.Option('Enter existing password',
-                          handle_existing_password_input))
+                          input_existing_data))
     return input_menu
 
 
@@ -76,18 +76,18 @@ def menu_loop(main_menu: menu.Menu,
     while True:
         os.system('clear')
         main_menu.print_options()
-        user_input = menu.Getch()()
-        if user_input == 'k':
+        user_input = get_user_input()
+        if user_input == 'k' or user_input == '\\A':
             main_menu.point_prev()
-        elif user_input == 'j':
+        elif user_input == 'j' or user_input == '\\B':
             main_menu.point_next()
-        elif user_input == 'l':
+        elif user_input == 'l' or user_input == '\r':
             if isinstance(main_menu.pointer, menu.Menu):
                 menu_loop(main_menu.pointer, database, key)
                 break
             elif isinstance(main_menu.pointer, menu.Option):
                 os.system('clear')
-                if main_menu.pointer.func == show_all_data:
+                if main_menu.pointer.func == show_all:
                     main_menu.pointer.func(database, key)
                     input("Press Enter to continue...")
                 elif main_menu.pointer.func.__code__.co_argcount \
@@ -95,7 +95,7 @@ def menu_loop(main_menu: menu.Menu,
                     main_menu.pointer.func(database, key)
                 else:
                     main_menu.pointer.func(database)
-        elif user_input == 'h':
+        elif user_input == 'h' or user_input == '\\D':
             if main_menu.parent is not None:
                 menu_loop(main_menu.parent, database, key)
                 break
@@ -103,6 +103,17 @@ def menu_loop(main_menu: menu.Menu,
             os.system('clear')
             os.system('tput cnorm')
             return None
+
+
+def get_user_input() -> str:
+    """Return a string representing the next character input,
+    checking for arrow key inputs."""
+    getch = menu.Getch()
+    char = getch()
+    if char == '\x1b':
+        getch()
+        return '\\' + getch()
+    return char
 
 
 def create_database(database: db.Database) -> bool:
@@ -142,7 +153,7 @@ def handle_password(trigger: bool, database: db.Database) -> str:
         os.system('clear')
 
 
-def show_search_query(database: db.Database, key: bytes) -> None:
+def show_search(database: db.Database, key: bytes) -> None:
     """Prompt the user to enter a search query and print all
     account information associated with that site. If multiple
     queries are found, have the user select."""
@@ -164,7 +175,8 @@ def show_search_query(database: db.Database, key: bytes) -> None:
             os.system('clear')
             os.system('tput civis')
 
-def show_all_data(database: db.Database, key: bytes) -> None:
+
+def show_all(database: db.Database, key: bytes) -> None:
     """Print all account information in the database"""
 
     queries = database.query_all_entries()
@@ -179,7 +191,7 @@ def show_all_data(database: db.Database, key: bytes) -> None:
         print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
 
 
-def handle_data_input(database: db.Database, key: bytes) -> None:
+def input_data(database: db.Database, key: bytes) -> None:
     """Prompts the user to enter account information and store it into the
     Account table in database as a row"""
 
@@ -208,7 +220,7 @@ def handle_data_input(database: db.Database, key: bytes) -> None:
                 return None
 
 
-def handle_existing_password_input(database: db.Database, key: bytes) -> None:
+def input_existing_data(database: db.Database, key: bytes) -> None:
     """Prompts the user to enter account information and password
     and store it int the Account table in database as a row."""
 
@@ -231,7 +243,7 @@ def handle_existing_password_input(database: db.Database, key: bytes) -> None:
     os.system('tput civis')
 
 
-def handle_data_update(database: db.Database, key: bytes) -> None:
+def update_data(database: db.Database, key: bytes) -> None:
     """Prompts the user to enter account information to update that row
     with a new generated password"""
 
@@ -257,7 +269,7 @@ def handle_data_update(database: db.Database, key: bytes) -> None:
             os.system('tput civis')
 
 
-def handle_data_delete(database: db.Database) -> None:
+def delete_data(database: db.Database) -> None:
     """Handles row deletion"""
 
     os.system('tput cnorm')
@@ -279,7 +291,7 @@ def handle_data_delete(database: db.Database) -> None:
             os.system('tput civis')
 
 
-def handle_table_delete(database: db.Database) -> None:
+def delete_all(database: db.Database) -> None:
     """Handles table deletion"""
     password = gp.getpass("You are about to wipe account info. " +
                           "Enter password to confirm: ")
