@@ -7,6 +7,7 @@ import tty
 import sys
 import termios
 
+
 class Getch:
     """A class to retrieve a single character from standard input."""
 
@@ -74,7 +75,7 @@ class Menu(MenuObject):
     def point_next(self) -> None:
         """Point to the next option in the menu if it exists.
         Otherewise, do nothing."""
-        if self.options.index(self.pointer + 1) == len(self.options):
+        if self.options.index(self.pointer) + 1 == len(self.options):
             return None
         else:
             self.pointer.selected = False
