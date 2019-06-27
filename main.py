@@ -167,6 +167,8 @@ def show_search(database: db.Database, key: bytes) -> None:
         return None
     else:
         search_result = user_enter_query(database)
+        if search_result == '\x1b':
+            return None
         results = fuzzy_search(search_result, database)
         op = build_menu_options(results)
         if len(op) == 1:
@@ -261,6 +263,8 @@ def update_data(database: db.Database, key: bytes) -> None:
         return None
     else:
         search_result = user_enter_query(database)
+        if search_result == '\x1b':
+            return None
         results = fuzzy_search(search_result, database)
         op = build_menu_options(results)
         if len(op) == 1:
@@ -291,6 +295,8 @@ def delete_data(database: db.Database) -> None:
         return None
     else:
         search_result = user_enter_query(database)
+        if search_result == '\x1b':
+            return None
         results = fuzzy_search(search_result, database)
         op = build_menu_options(results)
         if len(op) == 1:
@@ -334,6 +340,7 @@ def user_enter_query(database: db.Database) -> str:
         os.system('clear')
         print("Enter search: " + user_search)
         results = fuzzy_search(user_search, database)
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         if not results:
             print('None exist')
         else:
@@ -341,13 +348,15 @@ def user_enter_query(database: db.Database) -> str:
         user_input = menu.Getch()()
         if user_input == '\r' and results != []:
             break
-        if user_input == '\r' and results == []:
+        elif user_input == '\r' and results == []:
             continue
         elif user_input == '\x7f' and user_search == '':
             pass
         elif user_input == '\x7f' and user_search != '':
             user_search = user_search[:-1]
-        else:
+        elif user_input == '\x1b':
+            return '\x1b'
+        elif user_input.isprintable():
             user_search += user_input.lower()
     return user_search
 
