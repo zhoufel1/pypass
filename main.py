@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-import pyperclip
 import time
 import passwords
 import getpass as gp
@@ -10,6 +9,7 @@ import encryption as enc
 import bcrypt
 import search
 import menu
+import pyperclip as pyper
 from typing import Optional
 
 
@@ -43,6 +43,8 @@ def build_main_menu() -> menu.Menu:
     base_menu = menu.Menu(None)
     base_menu.add_option(build_search_menu(base_menu))
     base_menu.add_option(build_input_menu(base_menu))
+    base_menu.add_option(menu.Option("Update existing entry",
+                         update_data))
     base_menu.add_option(menu.Option('Delete existing entry',
                          delete_data))
     base_menu.add_option(menu.Option('Reset database', delete_all))
@@ -102,6 +104,7 @@ def menu_loop(main_menu: menu.Menu,
         elif user_input == 'q':
             os.system('clear')
             os.system('tput cnorm')
+            pyper.copy('')
             return None
 
 
@@ -160,20 +163,26 @@ def show_search(database: db.Database, key: bytes) -> None:
 
     os.system('tput cnorm')
     if check_database_empty(database):
+        os.system('tput civis')
         return None
     else:
-        results = fuzzy_search(database)
-        if not results:
-            os.system('tput civis')
-            return None
+        search_result = user_enter_query(database)
+        results = fuzzy_search(search_result, database)
+        op = build_menu_options(results)
+        if len(op) == 1:
+            pyper.copy(enc.decrypt_password(op[1].password, key))
         else:
-            pyperclip.\
-                copy(enc.decrypt_password(invoke_menu(results).password, key))
-            os.system('clear')
-            print("Password copied")
-            time.sleep(1)
-            os.system('clear')
-            os.system('tput civis')
+            while True:
+                u_input = input("Enter option: ").strip()
+                if u_input.isnumeric() and int(u_input) <= len(op):
+                    pw = enc.decrypt_password(op[int(u_input)].password, key)
+                    pyper.copy(pw)
+                    break
+        os.system('clear')
+        print("Password copied")
+        time.sleep(1)
+        os.system('clear')
+        os.system('tput civis')
 
 
 def show_all(database: db.Database, key: bytes) -> None:
@@ -212,7 +221,7 @@ def input_data(database: db.Database, key: bytes) -> None:
                                      username,
                                      enc.encrypt_password(password,
                                                           key))
-                pyperclip.copy(password)
+                pyper.copy(password)
                 os.system('clear')
                 print("Password copied!")
                 time.sleep(1)
@@ -227,7 +236,7 @@ def input_existing_data(database: db.Database, key: bytes) -> None:
     os.system('tput cnorm')
     site = input("\nEnter site: ").lower().strip(" ")
     username = input("Enter username: ").lower().strip(" ")
-    password = input("Enter password: ").strip(" ")
+    password = input("Enter password: ")
 
     if database.query_site_and_user(site, username) != {}:
         os.system('clear')
@@ -251,22 +260,27 @@ def update_data(database: db.Database, key: bytes) -> None:
     if check_database_empty(database):
         return None
     else:
-        results = fuzzy_search(database)
-        if not results:
-            os.system('tput civis')
-            return None
+        search_result = user_enter_query(database)
+        results = fuzzy_search(search_result, database)
+        op = build_menu_options(results)
+        if len(op) == 1:
+            selection = op[1]
         else:
-            selection = invoke_menu(results)
-            password = passwords.generate_password(int(input("Length? ")))
-            new_password = enc.encrypt_password(password, key)
-            database.update_item(selection.site,
-                                 selection.username,
-                                 new_password)
-            os.system('clear')
-            pyperclip.copy(password)
-            print("Password copied!")
-            time.sleep(1)
-            os.system('tput civis')
+            while True:
+                u_input = input("Enter option: ").strip()
+                if u_input.isnumeric() and int(u_input) <= len(op):
+                    selection = op[int(u_input)]
+                    break
+        password = passwords.generate_password(int(input("Length? ")))
+        new_password = enc.encrypt_password(password, key)
+        database.update_item(selection.site,
+                             selection.username,
+                             new_password)
+        os.system('clear')
+        print("Password copied")
+        time.sleep(1)
+        os.system('clear')
+        os.system('tput civis')
 
 
 def delete_data(database: db.Database) -> None:
@@ -276,19 +290,24 @@ def delete_data(database: db.Database) -> None:
     if check_database_empty(database):
         return None
     else:
-        results = fuzzy_search(database)
-        if not results:
-            os.system('tput civis')
-            return None
+        search_result = user_enter_query(database)
+        results = fuzzy_search(search_result, database)
+        op = build_menu_options(results)
+        if len(op) == 1:
+            selection = op[1]
         else:
-            selection = invoke_menu(results)
-            os.system('clear')
-            print("Account info deleted")
-            database.delete_row(selection.site,
-                                selection.username)
-            time.sleep(1)
-            os.system('clear')
-            os.system('tput civis')
+            while True:
+                u_input = input("Enter option: ").strip()
+                if u_input.isnumeric() and int(u_input) <= len(op):
+                    selection = op[int(u_input)]
+                    break
+        os.system('clear')
+        database.delete_row(selection.site,
+                            selection.username)
+        print("Account info deleted")
+        time.sleep(1)
+        os.system('clear')
+        os.system('tput civis')
 
 
 def delete_all(database: db.Database) -> None:
@@ -301,18 +320,42 @@ def delete_all(database: db.Database) -> None:
         print("*Password incorrect. Aborted*")
         time.sleep(1)
     else:
-        print("Dropping table...")
-        time.sleep(1)
         database.drop_tables()
+        print("All account information deleted")
+        input("\nPress Enter to continue...")
 
 
 # ======================Search Menu Logic========================
+def user_enter_query(database: db.Database) -> str:
+    """"""
+    os.system('tput civis')
+    user_search = ''
+    while True:
+        os.system('clear')
+        print("Enter search: " + user_search)
+        results = fuzzy_search(user_search, database)
+        if not results:
+            print('None exist')
+        else:
+            project_menu(build_menu_options(results))
+        user_input = menu.Getch()()
+        if user_input == '\r' and results != []:
+            break
+        if user_input == '\r' and results == []:
+            continue
+        elif user_input == '\x7f' and user_search == '':
+            pass
+        elif user_input == '\x7f' and user_search != '':
+            user_search = user_search[:-1]
+        else:
+            user_search += user_input.lower()
+    return user_search
+
 
 def invoke_menu(input_list: list):
     """
-    Display the meny of options and prompt the user
-    to select a valid option. Retrieve the password
-    with the associated selection.
+    Display the meny of options and prompt the user to select a
+    valid option. Retrieve the password with the associated selection.
 
     """
     options = build_menu_options(input_list)
@@ -320,7 +363,7 @@ def invoke_menu(input_list: list):
         print("No items found")
         time.sleep(1)
         os.system('clear')
-    show_menu(options)
+    project_menu(options)
     print('\n')
     while True:
         user_input = input("Enter option: ").strip()
@@ -328,7 +371,7 @@ def invoke_menu(input_list: list):
             return options[int(user_input)]
 
 
-def show_menu(menu_options: dict) -> None:
+def project_menu(menu_options: dict) -> None:
     """
     Show the options in the menu_options.
     """
@@ -349,32 +392,29 @@ def build_menu_options(input_list: list) -> list:
 
 
 def check_database_empty(database: db.Database) -> bool:
-    """Return True if <database> is empty, that is it has
-    no entries. Otherwise, return False.
+    """Return True if <database> is empty, that is it has no
+    entries. Otherwise, return False.
     """
     if database.is_empty():
         print("Database is empty...")
-        time.sleep(1)
+        input("\nPress Enter to continue...")
         os.system('clear')
         return True
     return False
 
 
-def fuzzy_search(database: db.Database) -> list:
+def fuzzy_search(search_input: str, database: db.Database) -> list:
     """
-    Prompt the user for a query and return a list
-    containing items that the fuzzy search yields.
+    Prompt the user for a query and return a list containing items
+    that the fuzzy search yields.
     """
 
-    search_input = input("\nEnter search: ").lower().strip(" ")
-    results = [item for item in database.query_database()
-               if search.is_found(search_input, item.site)
-               or search.is_found(search_input, item.username)]
-    os.system('clear')
-    if not results:
-        print('No results found')
-        time.sleep(1)
-        os.system('clear')
+    if not search_input:
+        results = database.query_database()
+    else:
+        results = [item for item in database.query_database()
+                   if search.is_found(search_input, item.site)
+                   or search.is_found(search_input, item.username)]
     return results
 
 
