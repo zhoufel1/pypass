@@ -47,8 +47,7 @@ class Database:
                                       username=username, password=password))
         self.session.commit()
 
-    def query_database(self,
-                       site: str = None, username: str = None) -> list:
+    def query_database(self) -> list:
         """
         Return all queries in the database.
         """
