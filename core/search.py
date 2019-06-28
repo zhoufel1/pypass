@@ -65,7 +65,7 @@ def calculate_diagonal(row: int, col: int, matrix: List[list],
 
 def is_found(source: str, target: str) -> bool:
     for i in range(len(target)):
-        if source[0] == target[i] and len(target) - i - 1 >= len(source) - 1:
+        if source[0] == target[i] and len(target) - 1 - i >= len(source) - 1:
             snippet = target[i:i + len(source)]
             if edit_distance(source, snippet) <= len(source) // 2:
                 return True
