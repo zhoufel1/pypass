@@ -11,14 +11,10 @@ def user_enter_query(database: db.Database) -> str:
 
     while True:
         os.system('clear')
-        print("Enter search: " + user_search)
+        print('Enter search: ' + user_search)
         results = fuzzy_search(user_search, database)
-        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-
-        if not results:
-            print('None exist')
-        else:
-            project_menu(build_menu_options(results))
+        print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+        project_menu(build_menu_options(results))
 
         user_input = Getch()()
         if user_input == ENTER and results != []:
@@ -33,13 +29,20 @@ def user_enter_query(database: db.Database) -> str:
             return ESC
         elif user_input.isprintable():
             user_search += user_input.lower()
+
     return user_search
 
 
 def project_menu(menu_options: dict) -> None:
-    for item in menu_options:
-        print('[' + str(item) + ']' + ' Site: ' + menu_options[item].site +
-              '\n    User: ' + menu_options[item].username)
+    if not menu_options:
+        print("Nothing found")
+    else:
+        for item in menu_options:
+            print('[' + str(item) + ']' +
+                  ' Site: ' +
+                  menu_options[item].site +
+                  '\n    User: ' +
+                  menu_options[item].username)
 
 
 def build_menu_options(input_list: list) -> list:
@@ -51,9 +54,8 @@ def build_menu_options(input_list: list) -> list:
 
 def check_database_empty(database: db.Database) -> bool:
     if database.is_empty():
-        print("Database is empty...")
-        input("\nPress Enter to continue...")
-        os.system('clear')
+        print('Database is empty...')
+        input('\nPress Enter to continue...')
         return True
     return False
 
