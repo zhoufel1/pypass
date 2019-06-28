@@ -1,8 +1,5 @@
-import string
 import random
-
-UPPER = string.ascii_uppercase
-LOWER = string.ascii_lowercase
+from constants import UPPER, LOWER
 
 
 def generate_password(length: int) -> str:
