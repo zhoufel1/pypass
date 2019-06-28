@@ -6,11 +6,7 @@ LOWER = string.ascii_lowercase
 
 
 def generate_password(length: int) -> str:
-    """Return a string representing a password of the given
-    <length> containing upper and lowercase alphanumeric
-    characters."""
-
-    password = ""
+    password = ''
     index = 0
     while index < length:
         character_type = random.randint(0, 2)
