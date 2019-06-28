@@ -1,10 +1,8 @@
 import os
-import time
 import search
 import database as db
 from getch import Getch
-
-ENTER = '\r'
+from constants import ENTER, BACKSPC, ESC
 
 
 def user_enter_query(database: db.Database) -> str:
@@ -27,12 +25,12 @@ def user_enter_query(database: db.Database) -> str:
             break
         elif user_input == ENTER and results == []:
             continue
-        elif user_input == '\x7f' and user_search == '':
+        elif user_input == BACKSPC and user_search == '':
             pass
-        elif user_input == '\x7f' and user_search != '':
+        elif user_input == BACKSPC and user_search != '':
             user_search = user_search[:-1]
-        elif user_input == '\x1b':
-            return '\x1b'
+        elif user_input == ESC:
+            return ESC
         elif user_input.isprintable():
             user_search += user_input.lower()
     return user_search
