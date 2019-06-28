@@ -47,7 +47,7 @@ def menu_loop(main_menu: menu.Menu,
                 os.system('clear')
                 if main_menu.pointer.func == dm.show_all:
                     main_menu.pointer.func(database, key)
-                    input("Press Enter to continue...")
+                    input("\nPress Enter to continue...")
                 elif main_menu.pointer.func.__code__.co_argcount \
                         == 2:
                     main_menu.pointer.func(database, key)
