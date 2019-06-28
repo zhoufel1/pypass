@@ -40,9 +40,7 @@ def handle_password(trigger: bool, database: db.Database) -> str:
 
 
 def show_search(database: db.Database, key: bytes) -> None:
-    if ds.check_database_empty(database):
-        return None
-    else:
+    if not ds.check_database_empty(database):
         search_result = ds.user_enter_query(database)
         if search_result == '\x1b':
             return None
@@ -70,12 +68,15 @@ def show_all(database: db.Database, key: bytes) -> None:
     if not queries:
         print("No items found\n")
     else:
-        print("\n━━━━━━━━━━━━Account Info━━━━━━━━━━━━")
         for site in queries:
-            print("*** " + site + ":")
-            for item in queries[site]:
-                print(item.username, enc.decrypt_password(item.password, key))
-        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+            print(site + "\n")
+            for item in queries[site][:-1]:
+                print('    ├── ' + item.username +
+                      '\n    │   └── ' +
+                      enc.decrypt_password(item.password, key))
+            print('    └── ' + queries[site][-1].username +
+                  '\n        └── ' +
+                  enc.decrypt_password(queries[site][-1].password, key))
 
 
 def input_data(database: db.Database, key: bytes) -> None:
@@ -85,6 +86,7 @@ def input_data(database: db.Database, key: bytes) -> None:
 
     if database.query_site_and_user(site, username) != {}:
         os.system('clear')
+        os.system('tput civis')
         print("*Item already exists*")
         time.sleep(1)
     else:
@@ -98,9 +100,9 @@ def input_data(database: db.Database, key: bytes) -> None:
                                                           key))
                 clip.copy(password)
                 os.system('clear')
+                os.system('tput civis')
                 print("Password copied!")
                 time.sleep(1)
-                os.system('tput civis')
                 return None
 
 
