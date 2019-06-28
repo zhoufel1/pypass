@@ -17,7 +17,7 @@ said instances up to a sensitivity.
 """
 
 from typing import List
-import constants import SENSITIVITY
+from constants import SENSITIVITY
 
 
 def edit_distance(source: str, target: str) -> int:
