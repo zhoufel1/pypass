@@ -38,20 +38,6 @@ def user_enter_query(database: db.Database) -> str:
     return user_search
 
 
-def invoke_menu(input_list: list):
-    options = build_menu_options(input_list)
-    if not options:
-        print("No items found")
-        time.sleep(1)
-        os.system('clear')
-    project_menu(options)
-    print('\n')
-    while True:
-        user_input = input("Enter option: ").strip()
-        if user_input.isnumeric() and int(user_input) <= len(options):
-            return options[int(user_input)]
-
-
 def project_menu(menu_options: dict) -> None:
     for item in menu_options:
         print('[' + str(item) + ']' + ' Site: ' + menu_options[item].site +
