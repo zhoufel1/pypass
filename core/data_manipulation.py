@@ -57,10 +57,10 @@ def show_search(database: db.Database, key: bytes) -> None:
                     clip.copy(pw)
                     break
 
+        os.system('tput civis')
         os.system('clear')
         print("Password copied")
         time.sleep(1)
-        os.system('tput civis')
 
 
 def show_all(database: db.Database, key: bytes) -> None:
@@ -110,20 +110,21 @@ def input_existing_data(database: db.Database, key: bytes) -> None:
     os.system('tput cnorm')
     site = input("\nEnter site: ").lower().strip(" ")
     username = input("Enter username: ").lower().strip(" ")
-    password = input("Enter password: ")
 
     if database.query_site_and_user(site, username) != {}:
+        os.system('tput civis')
         os.system('clear')
         print("*Item already exists*")
         time.sleep(1)
     else:
+        password = input("Enter password: ")
         database.insert_data(site,
                              username,
                              enc.encrypt_password(password, key))
+        os.system('tput civis')
         os.system('clear')
         print("Account information stored")
         time.sleep(1)
-    os.system('tput civis')
 
 
 def update_data(database: db.Database, key: bytes) -> None:
