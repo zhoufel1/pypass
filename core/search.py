@@ -1,4 +1,23 @@
+"""
+This module contains the algorithm used for the fuzzy searching
+capabilities of the repository. It calculates the edit distance
+between the query and items in the repository to generate a list
+of items of best match.
+
+The edit (Levenshtein) distance calculates the number of
+single character operations (insertion, deletion, substitution) it
+takes to transform the <source> to the <target>. We construct a
+len(source) * len(target) matrix and calculate the diagonal of
+said matrix formed by checking for the deletions, insertions, and
+substitutions needed.
+
+The search algorithm checks for instances in the target
+where the source is found, and recursively checks to
+said instances up to a sensitivity.
+"""
+
 from typing import List
+import constants import SENSITIVITY
 
 
 def edit_distance(source: str, target: str) -> int:
@@ -46,6 +65,6 @@ def is_found(source: str, target: str) -> bool:
             snippet = target[i:i + len(source)]
             if edit_distance(source, snippet) <= len(source) // 2:
                 return True
-    if len(source) - 1 > 4:
+    if len(source) - 1 > SENSITIVITY:
         return is_found(source[1:], target)
     return False
