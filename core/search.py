@@ -11,9 +11,19 @@ len(source) * len(target) matrix and calculate the diagonal of
 said matrix formed by checking for the deletions, insertions, and
 substitutions needed.
 
+For example, given "carrot" and "carry", we note it
+takes a deletion of "t" and a substitution of "y" for
+"o" to transform the source to the target, so the
+edit distance is 2.
+
 The search algorithm checks for instances in the target
 where the source is found, and recursively checks to
-said instances up to a sensitivity.
+said instances up to a sensitivity. The algorithm is
+able to check for muliple occurences in the target
+where the source occurs to prevent false non-detections.
+
+For example, given "books" and "www.ourbookstore.com", the
+algorithm checks if "books" and "ooks" are in the target.
 """
 
 from typing import List
