@@ -32,8 +32,6 @@ def handle_password(trigger: bool, database: db.Database) -> str:
         if first_entry == second_entry:
             database.set_password(enc.hash_password(first_entry))
             return first_entry
-
-        os.system('clear')
         print("*Passwords do not match*")
         time.sleep(1)
         os.system('clear')
@@ -128,10 +126,7 @@ def input_existing_data(database: db.Database, key: bytes) -> None:
 
 
 def update_data(database: db.Database, key: bytes) -> None:
-    if ds.check_database_empty(database):
-        return None
-    else:
-        os.system('tput cnorm')
+    if not ds.check_database_empty(database):
         search_result = ds.user_enter_query(database)
         if search_result == '\x1b':
             return None
@@ -157,10 +152,7 @@ def update_data(database: db.Database, key: bytes) -> None:
 
 
 def delete_data(database: db.Database) -> None:
-    if ds.check_database_empty(database):
-        return None
-    else:
-        os.system('tput cnorm')
+    if not ds.check_database_empty(database):
         search_result = ds.user_enter_query(database)
         if search_result == '\x1b':
             return None
