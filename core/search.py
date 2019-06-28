@@ -1,12 +1,11 @@
 """
-This module contains the algorithm used for the fuzzy searching
-capabilities of the repository. It calculates the edit distance
-between the query and items in the repository to generate a list
-of items of best match.
+This module contains the algorithm used in the program's fuzzy
+searcher. It calculates the edit distance the query and items in the
+repository and generates a list of items of best match.
 
-The edit (Levenshtein) distance calculates the number of
-single character operations (insertion, deletion, substitution) it
-takes to transform the <source> to the <target>. We construct a
+The edit (Levenshtein) distance denotes the number of
+single character operations (insertion, deletion, substitution)
+required to transform the source to the target. We construct a
 len(source) * len(target) matrix and calculate the diagonal of
 said matrix formed by checking for the deletions, insertions, and
 substitutions needed.
@@ -19,7 +18,7 @@ edit distance is 2.
 The search algorithm checks for instances in the target
 where the source is found, and recursively checks to
 said instances up to a sensitivity. The algorithm is
-able to check for muliple occurences in the target
+able to check for multiple occurrences in the target
 where the source occurs to prevent false non-detections.
 
 For example, given "books" and "www.ourbookstore.com", the
