@@ -2,24 +2,6 @@
 
 from __future__ import annotations
 from typing import Callable, Optional
-import os
-import tty
-import sys
-import termios
-
-
-class Getch:
-    """A class to retrieve a single character from standard input."""
-
-    def __call__(self) -> None:
-        file_desc = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(file_desc)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            char = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
-        return char
 
 
 class MenuObject:
