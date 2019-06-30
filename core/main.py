@@ -7,6 +7,7 @@ import pyperclip as clip
 import database as db
 import encryption as enc
 from typing import Optional
+from constants import ENTER, UP, DOWN, LEFT
 
 
 class PasswordError(Exception):
@@ -35,11 +36,11 @@ def menu_loop(main_menu: menu.Menu,
         os.system('clear')
         main_menu.print_options()
         user_input = get_user_input()
-        if user_input == 'k' or user_input == '\\A':
+        if user_input == 'k' or user_input == UP:
             main_menu.point_prev()
-        elif user_input == 'j' or user_input == '\\B':
+        elif user_input == 'j' or user_input == DOWN:
             main_menu.point_next()
-        elif user_input == 'l' or user_input == '\r':
+        elif user_input == 'l' or user_input == ENTER:
             if isinstance(main_menu.pointer, menu.Menu):
                 menu_loop(main_menu.pointer, database, key)
                 break
@@ -53,7 +54,7 @@ def menu_loop(main_menu: menu.Menu,
                     main_menu.pointer.func(database, key)
                 else:
                     main_menu.pointer.func(database)
-        elif user_input == 'h' or user_input == '\\D':
+        elif user_input == 'h' or user_input == LEFT:
             if main_menu.parent is not None:
                 menu_loop(main_menu.parent, database, key)
                 break
@@ -66,7 +67,6 @@ def menu_loop(main_menu: menu.Menu,
 
 def get_user_input() -> str:
     from getch import Getch
-
     getch = Getch()
     char = getch()
     if char == '\x1b':
