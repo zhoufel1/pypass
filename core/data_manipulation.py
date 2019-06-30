@@ -20,7 +20,7 @@ def create_database(database: db.Database) -> bool:
 
 def handle_password(trigger: bool, database: db.Database) -> str:
     if trigger:
-        entry = gp.getpass("Enter your password: ")
+        entry = gp.getpass("Enter master password: ")
         if not bcrypt.checkpw(entry.encode(),
                               database.retrieve_password()):
             raise Exception("Incorrect password")
@@ -67,7 +67,7 @@ def show_all(database: db.Database, key: bytes) -> None:
         print("No items found\n")
     else:
         for site in queries:
-            print(site + "\n")
+            print(site + '\n')
             for item in queries[site][:-1]:
                 print('    ├── ' + item.username +
                       '\n    │   └── ' +
