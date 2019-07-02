@@ -13,11 +13,14 @@ def user_enter_query(database: db.Database) -> str:
         os.system('clear')
         print('Enter search: ' + user_search)
         results = fuzzy_search(user_search, database)
-        print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-        project_menu(build_menu_options(results))
+        print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+        project_tree(results)
 
         user_input = Getch()()
         if user_input == ENTER and results != []:
+            if len(results) > 1:
+                os.system('clear')
+                project_options_menu(build_menu_options(results))
             break
         elif user_input == ENTER and results == []:
             continue
@@ -33,7 +36,7 @@ def user_enter_query(database: db.Database) -> str:
     return user_search
 
 
-def project_menu(menu_options: dict) -> None:
+def project_options_menu(menu_options: dict) -> None:
     if not menu_options:
         print("Nothing found")
     else:
@@ -43,6 +46,23 @@ def project_menu(menu_options: dict) -> None:
                   menu_options[item].site +
                   '\n    User: ' +
                   menu_options[item].username)
+
+
+def project_tree(results: list) -> None:
+    tree = list_to_dict(results)
+    if not tree:
+        print("Nothing found")
+    else:
+        for site in tree:
+            print(site + '\n')
+            for item in tree[site][:-1]:
+                print('    ├── ' + item)
+
+            print('    └── ' + tree[site][-1])
+
+
+def list_to_dict(lst: list) -> dict:
+    return {k.site: [x.username for x in lst if x.site == k.site] for k in lst}
 
 
 def build_menu_options(input_list: list) -> list:
@@ -68,3 +88,8 @@ def fuzzy_search(search_input: str, database: db.Database) -> list:
                    if search.is_found(search_input, item.site)
                    or search.is_found(search_input, item.username)]
     return results
+
+
+# Delete
+if __name__ == '__main__':
+    print(list_to_dict([1, 2, 3]))
