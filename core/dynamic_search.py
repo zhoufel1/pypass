@@ -11,7 +11,7 @@ def user_enter_query(database: db.Database) -> str:
 
     while True:
         os.system('clear')
-        print('Enter search: ' + user_search)
+        print('Enter search: ' + user_search + '█')
         results = fuzzy_search(user_search, database)
         print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
         project_tree(results)
