@@ -19,7 +19,6 @@ def run() -> None:
     database = db.Database()
 
     os.system('clear')
-    print("━━━━━━━━━━━Password Manager━━━━━━━━━━━")
 
     trigger = dm.create_database(database)
     key = enc.key_generator(dm.handle_password(trigger, database))
