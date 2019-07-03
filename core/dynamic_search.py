@@ -88,8 +88,3 @@ def fuzzy_search(search_input: str, database: db.Database) -> list:
                    if search.is_found(search_input, item.site)
                    or search.is_found(search_input, item.username)]
     return results
-
-
-# Delete
-if __name__ == '__main__':
-    print(list_to_dict([1, 2, 3]))
