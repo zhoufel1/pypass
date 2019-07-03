@@ -66,10 +66,7 @@ def list_to_dict(lst: list) -> dict:
 
 
 def build_menu_options(input_list: list) -> list:
-    results = {}
-    for i in range(len(input_list)):
-        results[i + 1] = input_list[i]
-    return results
+    return {i + 1: input_list[i] for i in range(len(input_list))}
 
 
 def check_database_empty(database: db.Database) -> bool:
