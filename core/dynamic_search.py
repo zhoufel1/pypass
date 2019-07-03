@@ -54,7 +54,7 @@ def project_menu_tree(results: list) -> None:
         print("Nothing found")
     else:
         for site in tree:
-            print(site + '\n')
+            print(site)
             for item in tree[site][:-1]:
                 print('    ├── ' + item)
 

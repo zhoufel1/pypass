@@ -2,6 +2,7 @@ import os
 import bcrypt
 import time
 import passwords
+import getch
 import encryption as enc
 import pyperclip as clip
 import dynamic_search as ds
@@ -49,7 +50,7 @@ def show_search(database: db.Database, key: bytes) -> None:
         else:
             os.system('tput cnorm')
             while True:
-                u_input = input("Enter option: ").strip()
+                u_input = getch.Getch()()
                 if u_input.isnumeric() and int(u_input) <= len(op):
                     pw = enc.decrypt_password(op[int(u_input)].password, key)
                     clip.copy(pw)
@@ -67,7 +68,7 @@ def show_all(database: db.Database, key: bytes) -> None:
         print("No items found\n")
     else:
         for site in queries:
-            print(site + '\n')
+            print(site)
             for item in queries[site][:-1]:
                 print('    ├── ' + item.username +
                       '\n    │   └── ' +
@@ -136,7 +137,7 @@ def update_data(database: db.Database, key: bytes) -> None:
             selection = op[1]
         else:
             while True:
-                u_input = input("Enter option: ").strip()
+                u_input = getch.Getch()()
                 if u_input.isnumeric() and int(u_input) <= len(op):
                     selection = op[int(u_input)]
                     break
@@ -162,7 +163,7 @@ def delete_data(database: db.Database) -> None:
             selection = op[1]
         else:
             while True:
-                u_input = input("Enter option: ").strip()
+                u_input = getch.Getch()()
                 if u_input.isnumeric() and int(u_input) <= len(op):
                     selection = op[int(u_input)]
                     break
