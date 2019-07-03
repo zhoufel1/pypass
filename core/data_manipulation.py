@@ -12,28 +12,34 @@ import database as db
 
 def create_database(database: db.Database) -> bool:
     if not os.path.exists('./account_database.db'):
-        print("Creating account database...")
+        os.system('tput civis')
+        input("Welcome to pypass!\n" +
+              "Let's begin by creating a master password\n" +
+              "Please ensure it's memorable but secure\n" +
+              "\nPress Enter to continue...")
         database.create_database()
+        os.system('tput cnorm')
+        os.system('clear')
         return False
-    print("Accessing database...")
+    print("Pypass\n\n" + "Accessing password repository...")
     return True
 
 
 def handle_password(trigger: bool, database: db.Database) -> str:
     if trigger:
-        entry = gp.getpass("Enter master password: ")
+        entry = gp.getpass("Enter your master password []: ")
         if not bcrypt.checkpw(entry.encode(),
                               database.retrieve_password()):
             raise Exception("Incorrect password")
         return entry
 
     while True:
-        first_entry = gp.getpass("Enter a password for database: ")
-        second_entry = gp.getpass("Re-enter the password: ")
+        first_entry = gp.getpass("Enter a master password []: ")
+        second_entry = gp.getpass("Re-enter the password []: ")
         if first_entry == second_entry:
             database.set_password(enc.hash_password(first_entry))
             return first_entry
-        print("*Passwords do not match*")
+        print("\nPasswords do not match!")
         time.sleep(1)
         os.system('clear')
 
@@ -80,8 +86,8 @@ def show_all(database: db.Database, key: bytes) -> None:
 
 def input_data(database: db.Database, key: bytes) -> None:
     os.system('tput cnorm')
-    site = input("\nEnter site: ").lower().strip(" ")
-    username = input("Enter username: ").lower().strip(" ")
+    site = input("\nEnter website []: ").lower().strip(" ")
+    username = input("Enter account username []: ").lower().strip(" ")
 
     if database.query_site_and_user(site, username) != {}:
         os.system('clear')
@@ -90,7 +96,7 @@ def input_data(database: db.Database, key: bytes) -> None:
         time.sleep(1)
     else:
         while True:
-            length = input("Password length? ")
+            length = input("Generate password of length []: ")
             if length.isnumeric():
                 password = passwords.generate_password(int(length))
                 database.insert_data(site,
@@ -107,16 +113,16 @@ def input_data(database: db.Database, key: bytes) -> None:
 
 def input_existing_data(database: db.Database, key: bytes) -> None:
     os.system('tput cnorm')
-    site = input("\nEnter site: ").lower().strip(" ")
-    username = input("Enter username: ").lower().strip(" ")
+    site = input("\nEnter website []: ").lower().strip(" ")
+    username = input("Enter account username []: ").lower().strip(" ")
 
     if database.query_site_and_user(site, username) != {}:
         os.system('tput civis')
         os.system('clear')
-        print("*Item already exists*")
+        print("Item already exists!")
         time.sleep(1)
     else:
-        password = input("Enter password: ")
+        password = input("Enter password []: ")
         database.insert_data(site,
                              username,
                              enc.encrypt_password(password, key))
@@ -172,16 +178,15 @@ def delete_data(database: db.Database) -> None:
                             selection.username)
         print("Account info deleted")
         time.sleep(1)
-        os.system('tput civis')
 
 
 def delete_all(database: db.Database) -> None:
-    password = gp.getpass("You are about to wipe account info. " +
-                          "Enter password to confirm: ")
+    password = gp.getpass("You are about to delete account info.\n\n" +
+                          "Enter your master password to confirm []: ")
     os.system('clear')
     if not bcrypt.checkpw(password.encode(),
                           database.retrieve_password()):
-        print("*Password incorrect. Aborted*")
+        print("Password incorrect. Aborted")
         time.sleep(1)
     else:
         database.drop_tables()
