@@ -82,9 +82,7 @@ def check_database_empty(database: db.Database) -> bool:
 
 def fuzzy_search(search_input: str, database: db.Database) -> list:
     if not search_input:
-        results = database.query_database()
-    else:
-        results = [item for item in database.query_database()
-                   if search.is_found(search_input, item.site)
-                   or search.is_found(search_input, item.username)]
-    return results
+        return database.query_database()
+    return [item for item in database.query_database()
+            if search.is_found(search_input, item.site)
+            or search.is_found(search_input, item.username)]
