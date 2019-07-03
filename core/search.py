@@ -13,7 +13,16 @@ substitutions needed.
 For example, given "carrot" and "carry", we note it
 takes a deletion of "t" and a substitution of "y" for
 "o" to transform the source to the target, so the
-edit distance is 2.
+edit distance is 2. The corresponding matrix is:
+
+                    C  A  R  R  Y
+                 0  1  2  3  4  5
+               C 1  0  1  2  3  4
+               A 2  1  0  1  2  3
+               R 3  2  1  0  1  2
+               R 4  3  2  1  0  1
+               O 5  4  3  2  1  1
+               T 6  5  4  3  2  2
 
 The search algorithm checks for instances in the target
 where the source is found, and recursively checks to
