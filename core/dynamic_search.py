@@ -14,24 +14,24 @@ def user_enter_query(database: db.Database) -> str:
         print('Enter search: ' + user_search + '█')
         results = fuzzy_search(user_search, database)
         print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-        project_tree(results)
+        project_menu_tree(results)
 
-        user_input = Getch()()
-        if user_input == ENTER and results != []:
+        input_char = Getch()()
+        if input_char == ENTER and results != []:
             if len(results) > 1:
                 os.system('clear')
                 project_options_menu(build_menu_options(results))
             break
-        elif user_input == ENTER and results == []:
+        elif input_char == ENTER and results == []:
             continue
-        elif user_input == BACKSPC and user_search == '':
+        elif input_char == BACKSPC and user_search == '':
             pass
-        elif user_input == BACKSPC and user_search != '':
+        elif input_char == BACKSPC and user_search != '':
             user_search = user_search[:-1]
-        elif user_input == ESC:
+        elif input_char == ESC:
             return ESC
-        elif user_input.isprintable():
-            user_search += user_input.lower()
+        elif input_char.isprintable():
+            user_search += input_char.lower()
 
     return user_search
 
@@ -48,7 +48,7 @@ def project_options_menu(menu_options: dict) -> None:
                   menu_options[item].username)
 
 
-def project_tree(results: list) -> None:
+def project_menu_tree(results: list) -> None:
     tree = list_to_dict(results)
     if not tree:
         print("Nothing found")
