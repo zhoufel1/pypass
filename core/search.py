@@ -22,7 +22,7 @@ edit distance is 2. The corresponding matrix is:
                R 3  2  1  0  1  2
                R 4  3  2  1  0  1
                O 5  4  3  2  1  1
-               T 6  5  4  3  2  2
+               T 6  5  4  3  2 [2]
 
 The search algorithm checks for instances in the target
 where the source is found, and recursively checks to
