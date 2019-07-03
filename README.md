@@ -1,4 +1,4 @@
-# Password-Manager-
+# pypass
 
 A CLI based password manager for personal use. It generates cryptographically secure passwords, encrypts them, and stores them in an embedded database.
 
