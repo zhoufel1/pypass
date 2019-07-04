@@ -70,12 +70,12 @@ Pressing `ESC` during a search terminates the search.
 
 #### Fuzzy Searching
 Pypass has a fuzzy searcher so that large repositories can be easier traversed.
-<img src="https://user-images.githubusercontent.com/44934000/60641612-8f1df200-9dfa-11e9-9d84-7d1765fff9aa.gif" width="300">
+<img src="https://user-images.githubusercontent.com/44934000/60641612-8f1df200-9dfa-11e9-9d84-7d1765fff9aa.gif" width="320">
 
 
 #### Password Copying
 Passwords are pushed to the system clipboard.
-<img src="https://user-images.githubusercontent.com/44934000/60641884-c17c1f00-9dfb-11e9-9d7d-ad708f75efcc.gif" width="300">
+<img src="https://user-images.githubusercontent.com/44934000/60641884-c17c1f00-9dfb-11e9-9d7d-ad708f75efcc.gif" width="320">
 
 
 ## Examples
