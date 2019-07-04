@@ -68,6 +68,11 @@ Pressing `q` in the main menu terminates the program. The system clipboard is pu
 Pressing `ESC` during a search terminates the search.
 
 
+#### Fuzzy Searching
+Pypass has a fuzzy searcher so that large repositories can be easier traversed.
+<img src="https://user-images.githubusercontent.com/44934000/60641612-8f1df200-9dfa-11e9-9d84-7d1765fff9aa.gif" width="358">
+
+
 ## Examples
 
 _project by Felix Zhou._
