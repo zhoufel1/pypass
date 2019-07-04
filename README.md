@@ -1,8 +1,14 @@
 # pypass
 
-Pypass is a CLI based password manager written in python. It generates cryptographically secure passwords, encrypts them, and stores them in an embedded database.
+Pypass is a CLI based password manager written in Python. It intends to be a fast, secure, and most importantly user-friendly alternative to other CLI-based solutions.
 
-<!--![compressed_example](https://user-images.githubusercontent.com/44934000/52548221-52ddec80-2d9a-11e9-8f07-50920cdc8b02.gif)-->
+# Table of Contents
+1. [Example](#example)
+2. [Example2](#example2)
+3. [Third Example](#third-example)
+4. [Fourth Example](#fourth-examplehttpwwwfourthexamplecom)
+
+
 
 ## Encryption
 It is essential that account data is encrypted before it is stored. This program uses the `cryptography` library built on AES-128 in conjunction with PBKDF2 (SHA256) to generate keys. The passwords are salted using the secure random number generator from `urandom`.
