@@ -92,8 +92,8 @@ def input_data(database: db.Database, key: bytes) -> None:
     if database.query_site_and_user(site, username) != {}:
         os.system('clear')
         os.system('tput civis')
-        print("*Item already exists*")
-        time.sleep(1)
+        print("[Error]: Item already exists")
+        time.sleep(1.4)
     else:
         while True:
             length = input("Generate password of length []: ")
@@ -119,8 +119,8 @@ def input_existing_data(database: db.Database, key: bytes) -> None:
     if database.query_site_and_user(site, username) != {}:
         os.system('tput civis')
         os.system('clear')
-        print("Item already exists!")
-        time.sleep(1)
+        print("[Error]: Item already exists")
+        time.sleep(1.4)
     else:
         password = input("Enter password []: ")
         database.insert_data(site,
