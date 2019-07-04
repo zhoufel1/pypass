@@ -21,16 +21,15 @@ Pypass encrypts all passwords prior to storage. It uses the `cryptography` libra
 
 ## User Guide
 ### Setup and Dependencies
-It is recommended to use >=Python3.6.1. The dependencies are outlined in `requirements.txt`.
-
 First, clone the repository:
 
 ```
 $ git clone https://github.com/zhoufel1/pypass.git
 ```
 
+It is recommended to use >=Python3.6.1. The dependencies are outlined in `requirements.txt`.
 
-An install script `install` is included that will install and setup a virtual environment with the required dependencies. Alternatively, you can do
+An install script `install` is included that will install and setup a virtual environment with the required dependencies. Alternatively, you can do:
 
 ```
 $ pip3 install --upgrade -r requirements.txt
@@ -43,9 +42,9 @@ $ ./run
 ```
 The program will prompt for the creation of a master password which will be used to access the database on future use.
 
-It is recommended for future convenience to have a shell script to run the program.<br/>
+It is VERY recommended for future convenience to create a shell script to access the virtual environment and run the program. For example, the following
+`pypass` script allows pypass to be run via the command `pypass`:
 
-Here is an example script that will activate a virtual environment containing the dependencies, run the program, and deactivate the virtual environment on exit.
 ```
 #!/bin/bash
 
