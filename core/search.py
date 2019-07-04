@@ -1,5 +1,5 @@
 """
-This module contains the algorithm used in the program's fuzzy
+This module contains the algorithm used in the pypass's fuzzy
 searcher. It calculates the edit distance the query and items in the
 repository and generates a list of items of best match.
 
@@ -28,7 +28,8 @@ The search algorithm checks for instances in the target
 where the source is found, and recursively checks to
 said instances up to a sensitivity. The algorithm is
 able to check for multiple occurrences in the target
-where the source occurs to prevent false non-detections.
+where the source occurs to prevent non-detections where
+a detection should occur.
 
 For example, given "books" and "www.ourbookstore.com", the
 algorithm checks if "books" and "ooks" are in the target.
