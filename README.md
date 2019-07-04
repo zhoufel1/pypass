@@ -6,7 +6,6 @@ Pypass is a fast, secure, and user-friendly CLI based password manager written i
 1. [Features](#features)
 2. [Encryption](#encryption)
 3. [User Guide](#user-guide)
-4. [Examples](#examples)
 
 ## Features
 Pypass serves as an alternative to pricey and bloated GUI-based password managers as well as well written CLI solutions that are very functional but often hard to use. Some features include:
@@ -76,8 +75,5 @@ Pypass has a fuzzy searcher so that large repositories can be easier traversed.
 #### Password Copying
 Passwords are pushed to the system clipboard.</br>
 <img src="https://user-images.githubusercontent.com/44934000/60641884-c17c1f00-9dfb-11e9-9d7d-ad708f75efcc.gif" width="320">
-
-
-## Examples
 
 _project by Felix Zhou._
