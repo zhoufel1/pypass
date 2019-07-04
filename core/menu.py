@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 from typing import Callable, Optional
-import data_manipulation as dm
+import data_manipulation as data_manip
 
 
 class MenuObject:
@@ -64,23 +64,23 @@ def build_main_menu() -> Menu:
     base_menu.add_option(build_search_menu(base_menu))
     base_menu.add_option(build_input_menu(base_menu))
     base_menu.add_option(Option("Update existing entry",
-                         dm.update_data))
+                         data_manip.update_data))
     base_menu.add_option(Option('Delete existing entry',
-                         dm.delete_data))
-    base_menu.add_option(Option('Reset database', dm.delete_all))
+                         data_manip.delete_data))
+    base_menu.add_option(Option('Reset database', data_manip.delete_all))
     return base_menu
 
 
 def build_search_menu(base_menu: Menu) -> Menu:
     search_menu = Menu('Show entries', base_menu)
-    search_menu.add_option(Option('Search', dm.show_search))
-    search_menu.add_option(Option('Show all', dm.show_all))
+    search_menu.add_option(Option('Search', data_manip.show_search))
+    search_menu.add_option(Option('Show all', data_manip.show_all))
     return search_menu
 
 
 def build_input_menu(base_menu: Menu) -> Menu:
     input_menu = Menu('Add new entry', base_menu)
-    input_menu.add_option(Option('Generate password', dm.input_data))
+    input_menu.add_option(Option('Generate password', data_manip.input_data))
     input_menu.add_option(Option('Enter existing password',
-                          dm.input_existing_data))
+                          data_manip.input_existing_data))
     return input_menu
