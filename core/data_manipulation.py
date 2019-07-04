@@ -93,7 +93,7 @@ def input_data(database: db.Database, key: bytes) -> None:
         os.system('clear')
         os.system('tput civis')
         print("[Error]: Item already exists")
-        time.sleep(1.4)
+        time.sleep(1.3)
     else:
         while True:
             length = input("Generate password of length []: ")
@@ -120,7 +120,7 @@ def input_existing_data(database: db.Database, key: bytes) -> None:
         os.system('tput civis')
         os.system('clear')
         print("[Error]: Item already exists")
-        time.sleep(1.4)
+        time.sleep(1.3)
     else:
         password = input("Enter password []: ")
         database.insert_data(site,
@@ -129,7 +129,7 @@ def input_existing_data(database: db.Database, key: bytes) -> None:
         os.system('tput civis')
         os.system('clear')
         print("Account information stored")
-        time.sleep(1)
+        time.sleep(1.3)
 
 
 def update_data(database: db.Database, key: bytes) -> None:
@@ -177,7 +177,7 @@ def delete_data(database: db.Database) -> None:
         database.delete_row(selection.site,
                             selection.username)
         print("Account info deleted")
-        time.sleep(1)
+        time.sleep(1.3)
 
 
 def delete_all(database: db.Database) -> None:
@@ -187,7 +187,7 @@ def delete_all(database: db.Database) -> None:
     if not bcrypt.checkpw(password.encode(),
                           database.retrieve_password()):
         print("Password incorrect. Aborted")
-        time.sleep(1)
+        time.sleep(1.3)
     else:
         database.drop_tables()
         print("All account information deleted")
