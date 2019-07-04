@@ -1,13 +1,11 @@
 # pypass
 
-Pypass is a CLI based password manager written in Python. It intends to be a fast, secure, and most importantly user-friendly alternative to other CLI-based solutions.
+Pypass is a CLI based password manager written in Python. It intends to be a fast, secure, and user-friendlier alternative to other CLI-based solutions.
 
 # Table of Contents
-1. [Example](#example)
-2. [Example2](#example2)
-3. [Third Example](#third-example)
-4. [Fourth Example](#fourth-examplehttpwwwfourthexamplecom)
-
+1. [Features](#features)
+2. [Encryption](#encryption)
+3. [User Guide](#user-guide)
 
 
 ## Encryption
