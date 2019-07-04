@@ -8,8 +8,7 @@ Pypass is a fast, secure, and user-friendly CLI based password manager written i
 3. [User Guide](#user-guide)
 
 ## Features
-Pypass serves as an alternative to pricey and bloated GUI-based password managers as well as CLI solutions that are well made but often hard to use. Some
-features include:
+Pypass serves as an alternative to pricey and bloated GUI-based password managers as well as well written CLI solutions that are very functional but often hard to use. Some features include:
 
 * Secure storage of passwords in an embedded database.
 * SHA256 based encryption.
