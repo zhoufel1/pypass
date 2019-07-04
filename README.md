@@ -22,17 +22,20 @@ Pypass encrypts all passwords prior to storage. It uses the `cryptography` libra
 ## User Guide
 ### Setup and Dependencies
 It is recommended to use >=Python3.6.1. The dependencies are outlined in `requirements.txt`.
-```
-$ pip3 install py-bcrypt
-$ pip3 install cryptography
-$ pip3 install sqlalchemy
-$ pip3 install pyperclip
-```
-Then clone the repository by doing:
+
+First, clone the repository:
 
 ```
-$ git clone https://github.com/zhoufel1/Password-Manager-.git
+$ git clone https://github.com/zhoufel1/pypass.git
 ```
+
+
+An install script `install` is included that will install and setup a virtual environment with the required dependencies. Alternatively, you can do
+
+```
+$ pip3 install --upgrade -r requirements.txt
+```
+
 ### Using
 The program is executed through via the 'run' script:
 ```
