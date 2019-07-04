@@ -30,7 +30,7 @@ def handle_password(trigger: bool, database: db.Database) -> str:
         entry = gp.getpass("Enter your master password []: ")
         if not bcrypt.checkpw(entry.encode(),
                               database.retrieve_password()):
-            raise Exception("Incorrect password")
+            raise Exception("[Error] Incorrect password")
         return entry
 
     while True:
@@ -39,8 +39,8 @@ def handle_password(trigger: bool, database: db.Database) -> str:
         if first_entry == second_entry:
             database.set_password(enc.hash_password(first_entry))
             return first_entry
-        print("\nPasswords do not match!")
-        time.sleep(1)
+        print("\n[Error] Passwords do not match")
+        time.sleep(1.3)
         os.system('clear')
 
 
@@ -56,15 +56,15 @@ def show_search(database: db.Database, key: bytes) -> None:
         else:
             os.system('tput cnorm')
             while True:
-                u_input = getch.Getch()()
-                if u_input.isnumeric() and int(u_input) <= len(op):
-                    pw = enc.decrypt_password(op[int(u_input)].password, key)
+                usr_input = getch.Getch()()
+                if usr_input.isnumeric() and int(usr_input) <= len(op):
+                    pw = enc.decrypt_password(op[int(usr_input)].password, key)
                     clip.copy(pw)
                     break
 
         os.system('tput civis')
         os.system('clear')
-        print("Password copied")
+        print("Password copied to clipboard")
         time.sleep(1)
 
 
@@ -106,7 +106,7 @@ def input_data(database: db.Database, key: bytes) -> None:
                 clip.copy(password)
                 os.system('clear')
                 os.system('tput civis')
-                print("Password copied!")
+                print("Password copied to clipboard")
                 time.sleep(1)
                 return None
 
@@ -143,17 +143,18 @@ def update_data(database: db.Database, key: bytes) -> None:
             selection = op[1]
         else:
             while True:
-                u_input = getch.Getch()()
-                if u_input.isnumeric() and int(u_input) <= len(op):
-                    selection = op[int(u_input)]
+                usr_input = getch.Getch()()
+                if usr_input.isnumeric() and int(usr_input) <= len(op):
+                    selection = op[int(usr_input)]
                     break
-        password = passwords.generate_password(int(input("Length? ")))
+        user_input = int(input("Enter length of new password []: "))
+        password = passwords.generate_password(user_input)
         new_password = enc.encrypt_password(password, key)
         database.update_item(selection.site,
                              selection.username,
                              new_password)
         os.system('clear')
-        print("Password copied")
+        print("Password copied to clipboard")
         time.sleep(1)
         os.system('tput civis')
 
@@ -169,9 +170,9 @@ def delete_data(database: db.Database) -> None:
             selection = op[1]
         else:
             while True:
-                u_input = getch.Getch()()
-                if u_input.isnumeric() and int(u_input) <= len(op):
-                    selection = op[int(u_input)]
+                usr_input = getch.Getch()()
+                if usr_input.isnumeric() and int(usr_input) <= len(op):
+                    selection = op[int(usr_input)]
                     break
         os.system('clear')
         database.delete_row(selection.site,
@@ -181,12 +182,13 @@ def delete_data(database: db.Database) -> None:
 
 
 def delete_all(database: db.Database) -> None:
-    password = gp.getpass("You are about to delete account info.\n\n" +
+    password = gp.getpass("You are about to delete account info. " +
+                          "This is irreversible.\n\n" +
                           "Enter your master password to confirm []: ")
     os.system('clear')
     if not bcrypt.checkpw(password.encode(),
                           database.retrieve_password()):
-        print("Password incorrect. Aborted")
+        print("[Error]: Password incorrect. Aborted")
         time.sleep(1.3)
     else:
         database.drop_tables()
