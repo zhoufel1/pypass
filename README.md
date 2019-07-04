@@ -62,6 +62,8 @@ deactivate
 ```
 
 ### Usage
+Pypass's main menu can be navigated using `arrow keys` and `return` OR `h/j/k/l`.</br>
+Pressing `q` in the main menu terminates the program.
 
 
 ## Examples
