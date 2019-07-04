@@ -6,6 +6,7 @@ Pypass is a fast, secure, and user-friendly CLI based password manager written i
 1. [Features](#features)
 2. [Encryption](#encryption)
 3. [User Guide](#user-guide)
+4. [Examples](#examples)
 
 ## Features
 Pypass serves as an alternative to pricey and bloated GUI-based password managers as well as well written CLI solutions that are very functional but often hard to use. Some features include:
@@ -52,13 +53,12 @@ It is VERY recommended for future convenience to create a shell script to access
 source $HOME/.virtualenvs/password/bin/activate
 
 # Run program
-cd $HOME/Other/Password-Manager-
+cd $HOME/pypass
 ./run
 
 # Terminate venv on program close.
 deactivate
 ```
-<!--<img src="https://user-images.githubusercontent.com/44934000/52547424-94b86400-2d95-11e9-8fdb-46779f75612c.png" width="400"><img src="https://user-images.githubusercontent.com/44934000/52547415-8ec28300-2d95-11e9-8d79-6dbc7cf5f789.png" width="400">-->
 
 #### Fuzzy searching
 To aid with accessing items in the repository, the program has a fuzzy searcher which will return items associated with the user query.<br/>
