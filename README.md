@@ -74,7 +74,7 @@ Pypass has a fuzzy searcher so that large repositories can be easier traversed.
 
 
 #### Password Copying
-Passwords are pushed to the system clipboard.
+Passwords are pushed to the system clipboard.</br>
 <img src="https://user-images.githubusercontent.com/44934000/60641884-c17c1f00-9dfb-11e9-9d7d-ad708f75efcc.gif" width="320">
 
 
