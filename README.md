@@ -62,8 +62,9 @@ deactivate
 ```
 
 ### Usage
-Pypass's main menu can be navigated using `arrow keys` and `return` OR `h/j/k/l`.</br>
-Pressing `q` in the main menu terminates the program.
+Pypass's main menu can be navigated using `arrow keys` and `return` OR `h/j/k/l`.
+Pressing `q` in the main menu terminates the program. The system clipboard is purged after the program terminates.
+Pressing `ESC` during a search terminates the search.
 
 
 ## Examples
