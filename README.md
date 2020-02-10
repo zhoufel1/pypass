@@ -13,7 +13,7 @@ Pypass serves as an alternative to pricey and bloated GUI-based password manager
 * Secure storage of passwords in an embedded database.
 * SHA-256 based encryption.
 * Organized tree visualization of account information.
-* Fuzzy saerching for account information
+* Fuzzy searching for account information
 * Copy to clipboard
 * Vim-based navigation
 
