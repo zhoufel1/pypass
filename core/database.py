@@ -2,7 +2,6 @@ import sqlalchemy as sql
 from sqlalchemy.ext import declarative
 from sqlalchemy import orm
 
-
 class Database:
     Base = declarative.declarative_base()
 
@@ -84,4 +83,7 @@ class Database:
 
     def retrieve_password(self) -> bytes:
         query = self.session.query(self.Password).all()
-        return query[0].password
+        try:
+            return query[0].password
+        except:
+            raise Exception("Master password was not saved on initialization. Delete account_database.db")
