@@ -10,7 +10,3 @@ LEFT = '\\D'
 
 # Search Algorithm
 SENSITIVITY = 4
-
-# ASCII alpabet
-UPPER = string.ascii_uppercase
-LOWER = string.ascii_lowercase

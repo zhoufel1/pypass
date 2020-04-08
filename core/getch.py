@@ -4,7 +4,6 @@ import termios
 
 
 class Getch:
-
     def __call__(self) -> None:
         file_desc = sys.stdin.fileno()
         old_settings = termios.tcgetattr(file_desc)

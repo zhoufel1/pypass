@@ -1,31 +1,26 @@
 #!/usr/bin/env python3
-
 from __future__ import annotations
 from typing import Callable, Optional
-import data_manipulation as data_manip
 
 
 class MenuObject:
-
     def __init__(self, title: str) -> None:
         self.title = title
         self.selected = False
 
     def __repr__(self) -> str:
         if self.selected:
-            return f'> {self.title}'
+            return f'❭ {self.title}'
         return f'  {self.title}'
 
 
 class Option(MenuObject):
-
     def __init__(self, title: str, func: Callable) -> None:
         super().__init__(title)
         self.func = func
 
 
 class Menu(MenuObject):
-
     def __init__(self, title: str, parent: Optional[Menu] = None):
         super().__init__(title)
         self.parent = parent
@@ -57,30 +52,3 @@ class Menu(MenuObject):
             self.pointer.selected = False
             self.pointer = self.options[self.options.index(self.pointer) - 1]
             self.pointer.selected = True
-
-
-def build_main_menu() -> Menu:
-    base_menu = Menu(None)
-    base_menu.add_option(build_search_menu(base_menu))
-    base_menu.add_option(build_input_menu(base_menu))
-    base_menu.add_option(Option("Update existing entry",
-                         data_manip.update_data))
-    base_menu.add_option(Option('Delete existing entry',
-                         data_manip.delete_data))
-    base_menu.add_option(Option('Reset database', data_manip.delete_all))
-    return base_menu
-
-
-def build_search_menu(base_menu: Menu) -> Menu:
-    search_menu = Menu('Show entries', base_menu)
-    search_menu.add_option(Option('Search', data_manip.show_search))
-    search_menu.add_option(Option('Show all', data_manip.show_all))
-    return search_menu
-
-
-def build_input_menu(base_menu: Menu) -> Menu:
-    input_menu = Menu('Add new entry', base_menu)
-    input_menu.add_option(Option('Generate password', data_manip.input_data))
-    input_menu.add_option(Option('Enter existing password',
-                          data_manip.input_existing_data))
-    return input_menu

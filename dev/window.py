@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+from typing import Callable, Any
+from system import *
+from constants import *
+
 import shutil
 import os
 from typing import *
@@ -7,6 +11,25 @@ import sys
 import tty
 import termios
 
+class Window:
+    def __init__(self) -> None:
+        self.operations = []
+
+    def add_operation(self, function: Callable, *args: Any) -> None:
+        self.operations.append((function, [arg for arg in args]))
+
+    def run_window(self) -> list:
+        clear_screen()
+        inputs = []
+        for pair in self.operations:
+            operation = pair[0]
+            args = pair[1]
+            if len(args) == 1:
+                if operation == input:
+                    inputs.append(operation(args[0]))
+                else:
+                    operation(args[0])
+        return inputs
 
 
 def main():
@@ -34,7 +57,7 @@ def scroll_test(data: List[str]):
         key = getch()
         if key == "\x1b":
             return 0
-        elif key == "j" and upper < len(data):
+        elif key == "j" or key == DOWN and upper < len(data):
             lower += 1
             upper += 1
         elif key == "k" and lower > 0:
