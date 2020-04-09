@@ -27,7 +27,7 @@ class AccountDatabase:
         self.Base.metadata.create_all(self.engine)
 
     def is_empty(self) -> bool:
-        return not self.query_database()
+        return not self.query_all_unfiltered()
 
     def insert_account(self, site: str, username: str, password: str) -> None:
         self.session.add(self.Account(site=site, username=username, password=password))
